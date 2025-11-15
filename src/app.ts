@@ -4,7 +4,7 @@ import helmet from "helmet";
 import { healthCheckMiddleware, healthCheckDetailedMiddleware } from "./shared/middleware/healthCheck.middleware";
 import { HttpStatusCode } from "./shared/models/errors";
 import { errorHandlerMiddleware } from "./shared/middleware/errorHandler.middleware";
-import eventRoutes from "./v1/songs/song.route";
+import songsRoutes from "./v1/songs/song.route";
 import { ErrorHandler } from "./shared/utils/errorHandler";
 import { Logger } from "./shared/utils/logger";
 
@@ -62,7 +62,7 @@ app.get("/health", healthCheckMiddleware);
 app.get("/health/detailed", healthCheckDetailedMiddleware);
 
 // API V1
-app.use("/api/v1/events", eventRoutes);
+app.use("/api/v1/songs", songsRoutes);
 
 // Error handling middleware
 app.use(errorHandlerMiddleware);
