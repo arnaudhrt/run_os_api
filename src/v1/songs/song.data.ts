@@ -14,13 +14,13 @@ export class SongData {
   }
 
   public static async createSong(data: CreateSongModel): Promise<string> {
-    const { name, artist, midi_file, cover_image, difficulty } = data;
+    const { name, artist, midi_file, cover_image, difficulty, player_id } = data;
 
     const result = await db.query(
-      `INSERT INTO songs (name, artist, cover_image, difficulty, midi_file) 
-         VALUES ($1, $2, $3, $4, $5) 
+      `INSERT INTO songs (name, artist, cover_image, difficulty, midi_file, player_id)
+         VALUES ($1, $2, $3, $4, $5, $6)
          RETURNING id`,
-      [name, artist, cover_image, difficulty, midi_file]
+      [name, artist, cover_image, difficulty, midi_file, player_id]
     );
 
     return result.rows[0].id;

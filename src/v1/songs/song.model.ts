@@ -5,6 +5,7 @@ export interface SongModel {
   cover_image: string;
   difficulty: string;
   midi_file: string;
+  player_id: string;
   created_at: string;
   updated_at: string;
 }

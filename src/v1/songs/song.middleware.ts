@@ -4,18 +4,13 @@ import { Logger } from "@/shared/utils/logger";
 import { NextFunction, Request, Response } from "express";
 import { z } from "zod";
 
-interface EventBody {
-  event_data: object;
-  discounts_data: object[];
-  ticket_types_data: object[];
-}
-
 const createSongSchema = z.object({
   name: z.string().min(1),
   artist: z.string().min(1),
   midi_file: z.string().min(1),
   cover_image: z.string().min(1),
   difficulty: z.string().min(1),
+  player_id: z.string().min(1),
 });
 
 export const verifyCreateSongFields = (req: Request, res: Response, next: NextFunction): void => {
