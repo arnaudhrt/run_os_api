@@ -37,14 +37,14 @@ const startServer = async () => {
 process.on("uncaughtException", (error: Error) => {
   const apiError = ErrorHandler.processError(error);
   Logger.error(apiError);
-  process.exit(1);
+  setTimeout(() => process.exit(1), 100);
 });
 
 // Handle unhandled rejections
 process.on("unhandledRejection", (reason: unknown) => {
   const apiError = ErrorHandler.processError(reason);
   Logger.error(apiError);
-  process.exit(1);
+  setTimeout(() => process.exit(1), 100);
 });
 
 startServer();

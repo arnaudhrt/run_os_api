@@ -19,31 +19,30 @@ initializeFirebase();
 
 const corsOptions: CorsOptions = {
   origin: (origin, callback) => {
-    // Allow requests with no origin (like mobile apps or Postman)
-    //if (!origin) return callback(null, true);
+    //Allow requests with no origin (like mobile apps or Postman)
+    if (!origin) return callback(null, true);
 
-    // const allowedOrigins = [
-    //   "http://localhost:3000",
-    //   "http://localhost:3001",
-    //   "http://127.0.0.1:3000",
-    //   "http://localhost:5173",
-    //   // Add your production frontend URL when you deploy it
-    //   // 'https://your-frontend.vercel.app',
-    // ];
+    const allowedOrigins = [
+      "http://localhost:3000",
+      "http://localhost:3001",
+      "http://127.0.0.1:3000",
+      "http://localhost:5173",
+      // Add your production frontend URL when you deploy it
+      // 'https://your-frontend.vercel.app',
+    ];
 
-    // if (process.env.NODE_ENV === "development") {
-    //   // In development, allow any localhost origin
-    //   if (origin.includes("localhost") || origin.includes("127.0.0.1")) {
-    //     return callback(null, true);
-    //   }
-    // }
+    if (process.env.NODE_ENV === "development") {
+      // In development, allow any localhost origin
+      if (origin.includes("localhost") || origin.includes("127.0.0.1")) {
+        return callback(null, true);
+      }
+    }
 
-    // if (allowedOrigins.includes(origin)) {
-    //   return callback(null, true);
-    // } else {
-    //   return callback(new Error("Not allowed by CORS"));
-    // }
-    return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      return callback(null, false);
+    }
   },
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],

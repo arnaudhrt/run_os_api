@@ -4,15 +4,25 @@ import { HttpStatusCode } from "@/shared/models/errors";
 import { ActivityData } from "./activity.data";
 import { Logger } from "@/shared/utils/logger";
 import { CreateActivityModel, ActivitySearchParams } from "./activity.model";
+import { structureActivitiesLog } from "./activity.utils";
 
 export class ActivityController {
   public static async getAllUserActivities(req: Request, res: Response): Promise<void> {
     try {
-      const activities = await ActivityData.getAllByUserId(req.dbUser!.id);
+      const [activities, dateRange] = await Promise.all([
+        ActivityData.getAllByUserId(req.dbUser!.id),
+        ActivityData.getDateRange(req.dbUser!.id),
+      ]);
+
+      const structuredLog = structureActivitiesLog(
+        activities,
+        dateRange.minDate,
+        dateRange.maxDate
+      );
 
       res.status(HttpStatusCode.OK).json({
         success: true,
-        data: activities,
+        data: structuredLog,
       });
     } catch (error) {
       const apiError = ErrorHandler.processError(error);

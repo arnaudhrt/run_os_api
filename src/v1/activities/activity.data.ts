@@ -178,4 +178,15 @@ export class ActivityData {
   public static async delete(id: string): Promise<void> {
     await db.query("DELETE FROM activities WHERE id = $1", [id]);
   }
+
+  public static async getDateRange(userId: string): Promise<{ minDate: string | null; maxDate: string | null }> {
+    const result = await db.query(
+      "SELECT MIN(DATE(start_time)) as min_date, MAX(DATE(start_time)) as max_date FROM activities WHERE user_id = $1",
+      [userId]
+    );
+    return {
+      minDate: result.rows[0]?.min_date || null,
+      maxDate: result.rows[0]?.max_date || null,
+    };
+  }
 }
