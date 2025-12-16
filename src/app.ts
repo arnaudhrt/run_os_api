@@ -4,12 +4,18 @@ import helmet from "helmet";
 import { healthCheckMiddleware, healthCheckDetailedMiddleware } from "./shared/middleware/healthCheck.middleware";
 import { HttpStatusCode } from "./shared/models/errors";
 import { errorHandlerMiddleware } from "./shared/middleware/errorHandler.middleware";
-import songsRoutes from "./v1/songs/song.route";
 import { ErrorHandler } from "./shared/utils/errorHandler";
 import { Logger } from "./shared/utils/logger";
+import { initializeFirebase } from "./shared/config/firebase.config";
+import authRoutes from "./v1/auth/auth.route";
+import seasonRoutes from "./v1/seasons/season.route";
+import activityRoutes from "./v1/activities/activity.route";
 
 // Initialize Express app
 const app: Application = express();
+
+// Initialize Firebase
+initializeFirebase();
 
 const corsOptions: CorsOptions = {
   origin: (origin, callback) => {
@@ -62,7 +68,9 @@ app.get("/health", healthCheckMiddleware);
 app.get("/health/detailed", healthCheckDetailedMiddleware);
 
 // API V1
-app.use("/api/v1/songs", songsRoutes);
+app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/seasons", seasonRoutes);
+app.use("/api/v1/activities", activityRoutes);
 
 // Error handling middleware
 app.use(errorHandlerMiddleware);

@@ -12,4 +12,7 @@ export const env = {
   RATE_LIMIT_MAX_REQUESTS: process.env.RATE_LIMIT_MAX_REQUESTS || 100,
   CORS_ORIGIN: process.env.CORS_ORIGIN || "http://localhost:3000",
   CORS_CREDENTIALS: process.env.CORS_CREDENTIALS || true,
+  FIREBASE_PROJECT_ID: process.env.FIREBASE_PROJECT_ID || "",
+  FIREBASE_CLIENT_EMAIL: process.env.FIREBASE_CLIENT_EMAIL || "",
+  FIREBASE_PRIVATE_KEY: process.env.FIREBASE_PRIVATE_KEY || "",
 };

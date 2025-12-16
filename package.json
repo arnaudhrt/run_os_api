@@ -1,5 +1,5 @@
 {
-  "name": "piano_player_api",
+  "name": "nodejs_api_boilerplate",
   "version": "0.0.1",
   "main": "dist/server.js",
   "scripts": {
@@ -27,7 +27,8 @@
     "pg-promise": "^11.13.0",
     "tsconfig-paths": "^4.2.0",
     "uuid": "^11.1.0",
-    "zod": "^3.25.64"
+    "zod": "^3.25.64",
+    "firebase-admin": "^13.4.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
