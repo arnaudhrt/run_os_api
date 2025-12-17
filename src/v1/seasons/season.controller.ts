@@ -9,7 +9,7 @@ export class SeasonController {
   // Season controllers
   public static async getUserActiveSeason(req: Request, res: Response): Promise<void> {
     try {
-      const season = await SeasonData.getActiveSeasonByUserId(req.dbUser!.id);
+      const season = await SeasonData.getActiveSeasonWithRacesByUserId(req.dbUser!.id);
 
       res.status(HttpStatusCode.OK).json({
         success: true,

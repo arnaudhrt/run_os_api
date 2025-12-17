@@ -50,3 +50,11 @@ export type CreatePhaseModel = Omit<PhaseModel, "id" | "created_at" | "updated_a
 export type UpdateSeasonModel = Partial<Omit<SeasonModel, "id" | "user_id" | "created_at" | "updated_at">>;
 export type UpdateRaceModel = Partial<Omit<RaceModel, "id" | "season_id" | "created_at" | "updated_at">>;
 export type UpdatePhaseModel = Partial<Omit<PhaseModel, "id" | "race_id" | "created_at" | "updated_at">>;
+
+export interface RaceWithPhasesModel extends RaceModel {
+  phases: PhaseModel[];
+}
+
+export interface SeasonWithRacesModel extends SeasonModel {
+  races: RaceWithPhasesModel[];
+}

@@ -13,11 +13,11 @@ import { verifyToken, requireUser } from "@/v1/auth/auth.middleware";
 const router = express.Router();
 
 // Season routes
-router.get("/", verifyToken, requireUser, SeasonController.getUserActiveSeason);
+router.get("/active", verifyToken, requireUser, SeasonController.getUserActiveSeason);
 router.get("/:id", verifyToken, SeasonController.getSeasonById);
-router.post("/season", verifyToken, requireUser, verifyCreateSeasonFields, SeasonController.createSeason);
-router.put("/season/:id", verifyToken, verifyUpdateSeasonFields, SeasonController.updateSeason);
-router.delete("/season/:id", verifyToken, SeasonController.deleteSeason);
+router.post("/", verifyToken, requireUser, verifyCreateSeasonFields, SeasonController.createSeason);
+router.put("/:id", verifyToken, verifyUpdateSeasonFields, SeasonController.updateSeason);
+router.delete("/:id", verifyToken, SeasonController.deleteSeason);
 
 // Race routes
 router.post("/race", verifyToken, verifyCreateRaceFields, SeasonController.createRace);
