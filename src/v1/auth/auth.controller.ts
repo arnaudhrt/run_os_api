@@ -35,6 +35,16 @@ export class AuthController {
   public static async registerUser(req: Request, res: Response): Promise<void> {
     const userData = req.body as CreateUserModel;
     try {
+      // Check if user already registered
+      const user = await AuthData.getUserById(userData.firebase_uid);
+      if (user) {
+        Logger.info("User already registered");
+        res.status(HttpStatusCode.OK).json({
+          success: true,
+        });
+        return;
+      }
+      // Register user
       await AuthData.registerUser(userData);
       Logger.info("User registration successful");
       res.status(HttpStatusCode.OK).json({
