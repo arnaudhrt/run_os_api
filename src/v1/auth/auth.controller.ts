@@ -5,6 +5,7 @@ import { AuthData } from "./auth.data";
 import { Logger } from "@/shared/utils/logger";
 import { CreateUserModel } from "./auth.model";
 import { StravaData } from "../strava/strava.data";
+import { GarminData } from "../garmin/garmin.data";
 
 export class AuthController {
   public static async getUser(req: Request, res: Response): Promise<void> {
@@ -20,10 +21,11 @@ export class AuthController {
       }
 
       const stravaAccount = await StravaData.getStravaAccountByUserId(user.id);
+      const garminAccount = await GarminData.getGarminAccountByUserId(user.id);
 
       res.status(HttpStatusCode.OK).json({
         success: true,
-        data: { ...user, strava_account: stravaAccount },
+        data: { ...user, strava_account: stravaAccount, garmin_account: garminAccount },
       });
     } catch (error) {
       const apiError = ErrorHandler.processError(error);

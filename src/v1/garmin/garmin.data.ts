@@ -1,12 +1,7 @@
 import { db } from "@/shared/database/database";
 import { GarminConnect } from "garmin-connect";
 import { encrypt, decrypt } from "@/shared/utils/crypto";
-import {
-  GarminAccountModel,
-  CreateGarminAccountModel,
-  UpdateGarminAccountModel,
-  GarminActivity,
-} from "./garmin.model";
+import { GarminAccountModel, CreateGarminAccountModel, UpdateGarminAccountModel, GarminActivity } from "./garmin.model";
 
 export class GarminData {
   /**
@@ -47,6 +42,9 @@ export class GarminData {
     return result.rows[0].id;
   }
 
+  /**
+   * Update Garmin account
+   */
   public static async updateGarminAccount(userId: string, data: UpdateGarminAccountModel): Promise<void> {
     const fields: string[] = [];
     const values: unknown[] = [];
@@ -139,10 +137,7 @@ export class GarminData {
   /**
    * Fetch all activities (paginated)
    */
-  public static async fetchAllActivities(
-    client: GarminConnect,
-    afterDate?: Date
-  ): Promise<GarminActivity[]> {
+  public static async fetchAllActivities(client: GarminConnect, afterDate?: Date): Promise<GarminActivity[]> {
     const allActivities: GarminActivity[] = [];
     let start = 0;
     const limit = 100;
@@ -153,9 +148,7 @@ export class GarminData {
       if (activities.length === 0) break;
 
       // Filter by date if provided
-      const filteredActivities = afterDate
-        ? activities.filter((a) => new Date(a.startTimeGMT) > afterDate)
-        : activities;
+      const filteredActivities = afterDate ? activities.filter((a) => new Date(a.startTimeGMT) > afterDate) : activities;
 
       allActivities.push(...filteredActivities);
 

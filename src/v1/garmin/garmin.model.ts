@@ -19,7 +19,6 @@ export type GarminActivityType =
   | "pilates"
   | "other";
 
-// Garmin activity structure from the API
 export interface GarminActivity {
   activityId: number;
   activityName?: string;
@@ -45,27 +44,17 @@ export interface GarminActivity {
   steps?: number;
   calories?: number;
   description?: string;
-
-  // Temperature
   minTemperature?: number; // Celsius
   maxTemperature?: number; // Celsius
-
-  // Training effect
   aerobicTrainingEffect?: number;
   anaerobicTrainingEffect?: number;
   trainingEffectLabel?: string;
-
-  // Heart rate zones (time in seconds)
   hrTimeInZone_1?: number;
   hrTimeInZone_2?: number;
   hrTimeInZone_3?: number;
   hrTimeInZone_4?: number;
   hrTimeInZone_5?: number;
-
-  // PR flag
   pr?: boolean;
-
-  // Additional fields
   beginTimestamp?: number;
   sportTypeId?: number;
   avgPower?: number;
