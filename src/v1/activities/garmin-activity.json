@@ -1,0 +1,41 @@
+[
+  {
+    "activityId": 21250610106,
+    "startTimeLocal": "2025-12-14 04:59:59",
+    "startTimeGMT": "2025-12-13 21:59:59",
+    "activityType": {
+      "typeKey": "running"
+    },
+    "distance": 21521.880859375,
+    "duration": 7471.916015625,
+    "elapsedDuration": 7471.916015625,
+    "movingDuration": 7466.402069091797,
+    "elevationGain": 161,
+    "elevationLoss": 164,
+    "averageSpeed": 2.880000114440918,
+    "maxSpeed": 3.7880001068115234,
+    "ownerProfileImageUrlMedium": "https://s3.amazonaws.com/garmin-connect-prod/profile_images/dfd88721-e440-496e-92a5-9c55eb174110-prfr.png",
+    "calories": 1966,
+    "averageHR": 172,
+    "maxHR": 184,
+    "averageRunningCadenceInStepsPerMinute": 157.171875,
+    "steps": 19592,
+
+    "beginTimestamp": 1765663199000,
+    "sportTypeId": 1,
+    "aerobicTrainingEffect": 5,
+    "anaerobicTrainingEffect": 0,
+    "minTemperature": 27,
+    "maxTemperature": 31,
+    "trainingEffectLabel": "VO2MAX",
+
+    "hrTimeInZone_1": 42.001,
+    "hrTimeInZone_2": 37,
+    "hrTimeInZone_3": 83,
+    "hrTimeInZone_4": 3436.674,
+    "hrTimeInZone_5": 3862.263,
+
+    "endTimeGMT": "2025-12-14 00:04:30",
+    "pr": true
+  }
+]

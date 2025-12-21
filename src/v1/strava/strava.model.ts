@@ -1,3 +1,55 @@
+export type StravaSportType =
+  | "AlpineSki"
+  | "BackcountrySki"
+  | "Badminton"
+  | "Canoeing"
+  | "Crossfit"
+  | "EBikeRide"
+  | "Elliptical"
+  | "EMountainBikeRide"
+  | "Golf"
+  | "GravelRide"
+  | "Handcycle"
+  | "HighIntensityIntervalTraining"
+  | "Hike"
+  | "IceSkate"
+  | "InlineSkate"
+  | "Kayaking"
+  | "Kitesurf"
+  | "MountainBikeRide"
+  | "NordicSki"
+  | "Pickleball"
+  | "Pilates"
+  | "Racquetball"
+  | "Ride"
+  | "RockClimbing"
+  | "RollerSki"
+  | "Rowing"
+  | "Run"
+  | "Sail"
+  | "Skateboard"
+  | "Snowboard"
+  | "Snowshoe"
+  | "Soccer"
+  | "Squash"
+  | "StairStepper"
+  | "StandUpPaddling"
+  | "Surfing"
+  | "Swim"
+  | "TableTennis"
+  | "Tennis"
+  | "TrailRun"
+  | "Velomobile"
+  | "VirtualRide"
+  | "VirtualRow"
+  | "VirtualRun"
+  | "Walk"
+  | "WeightTraining"
+  | "Wheelchair"
+  | "Windsurf"
+  | "Workout"
+  | "Yoga";
+
 export interface StravaTokenResponse {
   token_type: string;
   expires_at: number;
@@ -28,7 +80,7 @@ export interface StravaActivity {
   id: number;
   name: string;
   type: string;
-  sport_type: string;
+  sport_type: StravaSportType;
   start_date: string;
   start_date_local: string;
   timezone: string;
@@ -42,6 +94,7 @@ export interface StravaActivity {
   max_heartrate?: number;
   suffer_score?: number;
   average_cadence?: number;
+  calories?: number;
   elev_high?: number;
   elev_low?: number;
   workout_type?: number;

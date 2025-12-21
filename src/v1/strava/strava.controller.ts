@@ -6,6 +6,8 @@ import { Logger } from "@/shared/utils/logger";
 import { env } from "@/shared/config/global.config";
 import { StravaCallbackQuery } from "./strava.model";
 import { requireUser, verifyToken } from "../auth/auth.middleware";
+import { convertStravaActivities } from "./strava.utils";
+import { ActivityData } from "@/v1/activities/activity.data";
 
 export class StravaController {
   public static async handleCallback(req: Request, res: Response): Promise<void> {
@@ -105,7 +107,9 @@ export class StravaController {
 
   public static async syncActivities(req: Request, res: Response): Promise<void> {
     try {
-      const userId = req.dbUser!.id;
+      // TODO: Remove hardcoded userId and restore auth check
+      const userId = "9cdcf797-f80d-467d-a430-d511ddd343ed";
+      const { from_date } = req.query as { from_date?: string };
 
       const account = await StravaData.getStravaAccountByUserId(userId);
       if (!account) {
@@ -114,22 +118,40 @@ export class StravaController {
 
       const accessToken = await StravaData.getValidAccessToken(account);
 
-      // Fetch activities since last sync
-      const after = account.last_sync_at ? Math.floor(new Date(account.last_sync_at).getTime() / 1000) : undefined;
+      // Determine the "after" timestamp:
+      // 1. Use last_sync_at if available
+      // 2. Otherwise use from_date param if provided
+      // 3. Otherwise fetch all activities (undefined)
+      let after: number | undefined;
+      if (account.last_sync_at) {
+        after = Math.floor(new Date(account.last_sync_at).getTime() / 1000);
+      } else if (from_date) {
+        after = Math.floor(new Date(from_date).getTime() / 1000);
+      }
 
-      const activities = await StravaData.fetchAllActivities(accessToken, after);
+      const stravaActivities = await StravaData.fetchAllActivities(accessToken, after);
+      const convertedActivities = convertStravaActivities(stravaActivities, userId);
 
-      // Update last sync timestamp
-      await StravaData.updateStravaAccount(userId, {
-        last_sync_at: new Date(),
-      });
+      // Write to JSON file for inspection
+      const fs = await import("fs");
+      const path = await import("path");
+      const outputPath = path.join(process.cwd(), "strava_activities_debug.json");
+      fs.writeFileSync(
+        outputPath,
+        JSON.stringify(
+          {
+            strava_raw: stravaActivities,
+            converted: convertedActivities,
+            count: stravaActivities.length,
+          },
+          null,
+          2
+        )
+      );
 
       res.status(HttpStatusCode.OK).json({
         success: true,
-        data: {
-          activities_count: activities.length,
-          activities: activities,
-        },
+        message: `Wrote ${stravaActivities.length} activities to ${outputPath}`,
       });
     } catch (error) {
       const apiError = ErrorHandler.processError(error);

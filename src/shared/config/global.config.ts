@@ -17,4 +17,5 @@ export const env = {
   FIREBASE_PRIVATE_KEY: process.env.FIREBASE_PRIVATE_KEY || "",
   STRAVA_CLIENT_ID: process.env.STRAVA_CLIENT_ID || "",
   STRAVA_CLIENT_SECRET: process.env.STRAVA_CLIENT_SECRET || "",
+  ENCRYPTION_SECRET: process.env.ENCRYPTION_SECRET || "",
 };

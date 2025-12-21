@@ -43,51 +43,53 @@ export class ActivityData {
   }
 
   public static async create(data: CreateActivityWithUserModel): Promise<string> {
-    const {
-      user_id,
-      activity_type,
-      workout_type,
-      start_time,
-      distance_meters,
-      duration_seconds,
-      elevation_gain_meters,
-      elevation_loss_meters,
-      avg_heart_rate,
-      max_heart_rate,
-      avg_pace_min_per_km,
-      best_pace_min_per_km,
-      avg_cadence,
-      rpe,
-      notes,
-      avg_temperature_celsius,
-    } = data;
-
     const result = await db.query(
       `INSERT INTO activities (
-        user_id, activity_type, workout_type, start_time,
-        distance_meters, duration_seconds, elevation_gain_meters, elevation_loss_meters,
-        avg_heart_rate, max_heart_rate, avg_pace_min_per_km, best_pace_min_per_km,
-        avg_cadence, rpe, notes, avg_temperature_celsius
+        user_id, source, garmin_activity_id, strava_activity_id,
+        activity_type, workout_type, start_time,
+        distance_meters, duration_seconds, elapsed_duration_seconds,
+        elevation_gain_meters, elevation_loss_meters,
+        avg_heart_rate, max_heart_rate,
+        avg_speed_mps, max_speed_mps,
+        steps, avg_cadence, calories,
+        aerobic_training_effect, anaerobic_training_effect, training_effect_label,
+        time_in_zone_1, time_in_zone_2, time_in_zone_3, time_in_zone_4, time_in_zone_5,
+        avg_temperature_celsius, is_pr, rpe, notes
       )
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31)
        RETURNING id`,
       [
-        user_id,
-        activity_type,
-        workout_type,
-        start_time,
-        distance_meters || null,
-        duration_seconds || null,
-        elevation_gain_meters || null,
-        elevation_loss_meters || null,
-        avg_heart_rate || null,
-        max_heart_rate || null,
-        avg_pace_min_per_km || null,
-        best_pace_min_per_km || null,
-        avg_cadence || null,
-        rpe || null,
-        notes || null,
-        avg_temperature_celsius || null,
+        data.user_id,
+        data.source,
+        data.garmin_activity_id || null,
+        data.strava_activity_id || null,
+        data.activity_type,
+        data.workout_type,
+        data.start_time,
+        data.distance_meters || null,
+        data.duration_seconds || null,
+        data.elapsed_duration_seconds || null,
+        data.elevation_gain_meters || null,
+        data.elevation_loss_meters || null,
+        data.avg_heart_rate || null,
+        data.max_heart_rate || null,
+        data.avg_speed_mps || null,
+        data.max_speed_mps || null,
+        data.steps || null,
+        data.avg_cadence || null,
+        data.calories || null,
+        data.aerobic_training_effect || null,
+        data.anaerobic_training_effect || null,
+        data.training_effect_label || null,
+        data.time_in_zone_1 || null,
+        data.time_in_zone_2 || null,
+        data.time_in_zone_3 || null,
+        data.time_in_zone_4 || null,
+        data.time_in_zone_5 || null,
+        data.avg_temperature_celsius || null,
+        data.is_pr || false,
+        data.rpe || null,
+        data.notes || null,
       ]
     );
 
@@ -101,30 +103,51 @@ export class ActivityData {
       for (const activity of activities) {
         const result = await client.query(
           `INSERT INTO activities (
-            user_id, activity_type, workout_type, start_time,
-            distance_meters, duration_seconds, elevation_gain_meters, elevation_loss_meters,
-            avg_heart_rate, max_heart_rate, avg_pace_min_per_km, best_pace_min_per_km,
-            avg_cadence, rpe, notes, avg_temperature_celsius
+            user_id, source, garmin_activity_id, strava_activity_id,
+            activity_type, workout_type, start_time,
+            distance_meters, duration_seconds, elapsed_duration_seconds,
+            elevation_gain_meters, elevation_loss_meters,
+            avg_heart_rate, max_heart_rate,
+            avg_speed_mps, max_speed_mps,
+            steps, avg_cadence, calories,
+            aerobic_training_effect, anaerobic_training_effect, training_effect_label,
+            time_in_zone_1, time_in_zone_2, time_in_zone_3, time_in_zone_4, time_in_zone_5,
+            avg_temperature_celsius, is_pr, rpe, notes
           )
-           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
+           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31)
            RETURNING id`,
           [
             activity.user_id,
+            activity.source,
+            activity.garmin_activity_id || null,
+            activity.strava_activity_id || null,
             activity.activity_type,
             activity.workout_type,
             activity.start_time,
             activity.distance_meters || null,
             activity.duration_seconds || null,
+            activity.elapsed_duration_seconds || null,
             activity.elevation_gain_meters || null,
             activity.elevation_loss_meters || null,
             activity.avg_heart_rate || null,
             activity.max_heart_rate || null,
-            activity.avg_pace_min_per_km || null,
-            activity.best_pace_min_per_km || null,
+            activity.avg_speed_mps || null,
+            activity.max_speed_mps || null,
+            activity.steps || null,
             activity.avg_cadence || null,
+            activity.calories || null,
+            activity.aerobic_training_effect || null,
+            activity.anaerobic_training_effect || null,
+            activity.training_effect_label || null,
+            activity.time_in_zone_1 || null,
+            activity.time_in_zone_2 || null,
+            activity.time_in_zone_3 || null,
+            activity.time_in_zone_4 || null,
+            activity.time_in_zone_5 || null,
+            activity.avg_temperature_celsius || null,
+            activity.is_pr || false,
             activity.rpe || null,
             activity.notes || null,
-            activity.avg_temperature_celsius || null,
           ]
         );
         ids.push(result.rows[0].id);
@@ -140,21 +163,36 @@ export class ActivityData {
     let paramIndex = 1;
 
     const fieldMap: Record<string, keyof UpdateActivityModel> = {
+      source: "source",
+      garmin_activity_id: "garmin_activity_id",
+      strava_activity_id: "strava_activity_id",
       activity_type: "activity_type",
       workout_type: "workout_type",
       start_time: "start_time",
       distance_meters: "distance_meters",
       duration_seconds: "duration_seconds",
+      elapsed_duration_seconds: "elapsed_duration_seconds",
       elevation_gain_meters: "elevation_gain_meters",
       elevation_loss_meters: "elevation_loss_meters",
       avg_heart_rate: "avg_heart_rate",
       max_heart_rate: "max_heart_rate",
-      avg_pace_min_per_km: "avg_pace_min_per_km",
-      best_pace_min_per_km: "best_pace_min_per_km",
+      avg_speed_mps: "avg_speed_mps",
+      max_speed_mps: "max_speed_mps",
+      steps: "steps",
       avg_cadence: "avg_cadence",
+      calories: "calories",
+      aerobic_training_effect: "aerobic_training_effect",
+      anaerobic_training_effect: "anaerobic_training_effect",
+      training_effect_label: "training_effect_label",
+      time_in_zone_1: "time_in_zone_1",
+      time_in_zone_2: "time_in_zone_2",
+      time_in_zone_3: "time_in_zone_3",
+      time_in_zone_4: "time_in_zone_4",
+      time_in_zone_5: "time_in_zone_5",
+      avg_temperature_celsius: "avg_temperature_celsius",
+      is_pr: "is_pr",
       rpe: "rpe",
       notes: "notes",
-      avg_temperature_celsius: "avg_temperature_celsius",
     };
 
     for (const [dbField, dataKey] of Object.entries(fieldMap)) {
