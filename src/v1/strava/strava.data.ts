@@ -90,7 +90,8 @@ export class StravaData {
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message || "Failed to exchange code for tokens");
+      const errorDetails = error.errors ? JSON.stringify(error.errors) : "";
+      throw new Error(`Strava OAuth error: ${error.message || "Failed to exchange code"}${errorDetails ? ` - ${errorDetails}` : ""}`);
     }
 
     return response.json();
