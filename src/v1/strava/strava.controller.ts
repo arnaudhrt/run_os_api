@@ -155,4 +155,24 @@ export class StravaController {
       });
     }
   }
+
+  public static async getStravaUser(req: Request, res: Response): Promise<void> {
+    try {
+      const userId = req.dbUser!.id;
+
+      const account = await StravaData.getStravaAccountByUserId(userId);
+
+      res.status(HttpStatusCode.OK).json({
+        success: true,
+        data: account,
+      });
+    } catch (error) {
+      const apiError = ErrorHandler.processError(error);
+      Logger.error(apiError, { class: "StravaController", method: "getStravaUser" });
+      res.status(apiError.statusCode).json({
+        success: false,
+        message: apiError.message,
+      });
+    }
+  }
 }

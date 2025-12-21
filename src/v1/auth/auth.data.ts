@@ -10,7 +10,7 @@ export class AuthData {
   public static async registerUser(data: CreateUserModel): Promise<void> {
     const { first_name, last_name, email, firebase_uid } = data;
 
-    const result = await db.query(
+    await db.query(
       `INSERT INTO users (first_name, last_name, email, firebase_uid)
          VALUES ($1, $2, $3, $4)
          RETURNING id`,
