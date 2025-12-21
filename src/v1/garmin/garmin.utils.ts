@@ -60,28 +60,33 @@ export function convertGarminActivities(garminActivities: GarminActivity[], user
 
       activity_type: activityType,
       workout_type: "uncategorized" as const,
+      // Ensure the timestamp format is clean
       start_time: `${ga.startTimeGMT.replace(" ", "T")}Z`,
 
       distance_meters: ga.distance ? Math.round(ga.distance) : undefined,
       duration_seconds: ga.duration ? Math.round(ga.duration) : undefined,
       elapsed_duration_seconds: ga.elapsedDuration ? Math.round(ga.elapsedDuration) : undefined,
 
-      elevation_gain_meters: ga.elevationGain,
-      elevation_loss_meters: ga.elevationLoss,
+      // ADDED ROUNDING HERE:
+      elevation_gain_meters: ga.elevationGain ? Math.round(ga.elevationGain) : undefined,
+      elevation_loss_meters: ga.elevationLoss ? Math.round(ga.elevationLoss) : undefined,
 
-      avg_heart_rate: ga.averageHR,
-      max_heart_rate: ga.maxHR,
+      // ADDED ROUNDING HERE (For SMALLINT columns):
+      avg_heart_rate: ga.averageHR ? Math.round(ga.averageHR) : undefined,
+      max_heart_rate: ga.maxHR ? Math.round(ga.maxHR) : undefined,
 
-      avg_speed_mps: ga.averageSpeed,
-      max_speed_mps: ga.maxSpeed,
+      avg_speed_mps: ga.averageSpeed, // Decimal in DB - OK
+      max_speed_mps: ga.maxSpeed, // Decimal in DB - OK
 
-      steps: ga.steps,
+      // ADDED ROUNDING HERE:
+      steps: ga.steps ? Math.round(ga.steps) : undefined,
       avg_cadence: ga.averageRunningCadenceInStepsPerMinute ? Math.round(ga.averageRunningCadenceInStepsPerMinute) : undefined,
 
-      calories: ga.calories,
+      // ADDED ROUNDING HERE:
+      calories: ga.calories ? Math.round(ga.calories) : undefined,
 
-      aerobic_training_effect: ga.aerobicTrainingEffect,
-      anaerobic_training_effect: ga.anaerobicTrainingEffect,
+      aerobic_training_effect: ga.aerobicTrainingEffect, // Decimal(3,1) - OK
+      anaerobic_training_effect: ga.anaerobicTrainingEffect, // Decimal(3,1) - OK
       training_effect_label: ga.trainingEffectLabel,
 
       time_in_zone_1: roundZoneTime(ga.hrTimeInZone_1),
@@ -92,7 +97,7 @@ export function convertGarminActivities(garminActivities: GarminActivity[], user
 
       avg_temperature_celsius: calculateAvgTemperature(ga.minTemperature, ga.maxTemperature),
 
-      is_pr: ga.pr ?? false,
+      is_pr: !!ga.pr, // Ensure strictly boolean
 
       notes: "",
     };
