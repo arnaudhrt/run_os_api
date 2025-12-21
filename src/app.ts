@@ -8,8 +8,10 @@ import { ErrorHandler } from "./shared/utils/errorHandler";
 import { Logger } from "./shared/utils/logger";
 import { initializeFirebase } from "./shared/config/firebase.config";
 import authRoutes from "./v1/auth/auth.route";
-import seasonRoutes from "./v1/seasons/season.route";
+import raceRoutes from "./v1/races/race.route";
+import phaseRoutes from "./v1/phases/phase.route";
 import activityRoutes from "./v1/activities/activity.route";
+import stravaRoutes from "./v1/strava/strava.route";
 
 // Initialize Express app
 const app: Application = express();
@@ -68,8 +70,10 @@ app.get("/health/detailed", healthCheckDetailedMiddleware);
 
 // API V1
 app.use("/api/v1/auth", authRoutes);
-app.use("/api/v1/seasons", seasonRoutes);
+app.use("/api/v1/races", raceRoutes);
+app.use("/api/v1/phases", phaseRoutes);
 app.use("/api/v1/activities", activityRoutes);
+app.use("/api/v1/strava", stravaRoutes);
 
 // Error handling middleware
 app.use(errorHandlerMiddleware);
