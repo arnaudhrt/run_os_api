@@ -12,12 +12,25 @@ export class StravaController {
     try {
       const { code, scope, state } = req.query as StravaCallbackQuery;
       req.headers.authorization = `Bearer ${state}`;
-      verifyToken(req, res, () => {
-        return true;
-      });
-      requireUser(req, res, () => {
-        return true;
-      });
+
+      // Await the middleware and check if they completed successfully
+      let authFailed = false;
+      await verifyToken(req, res, () => {});
+      if (!req.user) {
+        authFailed = true;
+      }
+      if (!authFailed) {
+        await requireUser(req, res, () => {});
+        if (!req.dbUser) {
+          authFailed = true;
+        }
+      }
+
+      if (authFailed) {
+        // Response already sent by middleware
+        return;
+      }
+
       const userId = req.dbUser!.id;
 
       const tokens = await StravaData.exchangeCodeForTokens(code!);
