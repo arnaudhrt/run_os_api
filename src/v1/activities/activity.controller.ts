@@ -4,7 +4,6 @@ import { HttpStatusCode } from "@/shared/models/errors";
 import { ActivityData } from "./activity.data";
 import { Logger } from "@/shared/utils/logger";
 import { CreateActivityModel, ActivitySearchParams } from "./activity.model";
-import { structureActivitiesLog } from "./activity.utils";
 
 export class ActivityController {
   public static async getAllUserActivities(req: Request, res: Response): Promise<void> {
@@ -14,9 +13,9 @@ export class ActivityController {
       res.status(HttpStatusCode.OK).json({
         success: true,
         data: {
-          activities,
-          min_date: dateRange.minDate,
-          max_date: dateRange.maxDate,
+          activities, // ActicityModel[]
+          min_date: dateRange.minDate, // earliest date activity found in the database (ISO string T)
+          max_date: dateRange.maxDate, // latest date activity found in the database (ISO string T)
         },
       });
     } catch (error) {

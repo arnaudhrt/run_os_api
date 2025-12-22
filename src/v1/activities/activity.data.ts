@@ -115,6 +115,7 @@ export class ActivityData {
             avg_temperature_celsius, is_pr, rpe, notes
           )
            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31)
+           ON CONFLICT (garmin_activity_id) WHERE garmin_activity_id IS NOT NULL DO NOTHING
            RETURNING id`,
           [
             activity.user_id,
@@ -150,7 +151,9 @@ export class ActivityData {
             activity.notes || null,
           ]
         );
-        ids.push(result.rows[0].id);
+        if (result.rows[0]?.id) {
+          ids.push(result.rows[0].id);
+        }
       }
     });
 
