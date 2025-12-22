@@ -76,7 +76,7 @@ export interface WeekEntry {
     distance_meters: number;
     duration_seconds: number;
     elevation_gain_meters: number;
-    activitiesCount: number;
+    activities_count: number;
   };
 }
 
@@ -88,7 +88,7 @@ export interface MonthEntry {
     distance_meters: number;
     duration_seconds: number;
     elevation_gain_meters: number;
-    activitiesCount: number;
+    activities_count: number;
   };
 }
 
@@ -99,7 +99,8 @@ export interface YearEntry {
     distance_meters: number;
     duration_seconds: number;
     elevation_gain_meters: number;
-    activitiesCount: number;
+    activities_count: number;
+    races_count: number;
   };
 }
 
@@ -109,6 +110,7 @@ export interface StructuredActivitiesLog {
     distance_meters: number;
     duration_seconds: number;
     elevation_gain_meters: number;
-    activitiesCount: number;
+    activities_count: number;
+    races_count: number;
   };
 }
