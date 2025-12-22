@@ -9,20 +9,15 @@ import { structureActivitiesLog } from "./activity.utils";
 export class ActivityController {
   public static async getAllUserActivities(req: Request, res: Response): Promise<void> {
     try {
-      const [activities, dateRange] = await Promise.all([
-        ActivityData.getAllByUserId(req.dbUser!.id),
-        ActivityData.getDateRange(req.dbUser!.id),
-      ]);
-
-      const structuredLog = structureActivitiesLog(
-        activities,
-        dateRange.minDate,
-        dateRange.maxDate
-      );
+      const [activities, dateRange] = await Promise.all([ActivityData.getAllByUserId(req.dbUser!.id), ActivityData.getDateRange(req.dbUser!.id)]);
 
       res.status(HttpStatusCode.OK).json({
         success: true,
-        data: structuredLog,
+        data: {
+          activities,
+          min_date: dateRange.minDate,
+          max_date: dateRange.maxDate,
+        },
       });
     } catch (error) {
       const apiError = ErrorHandler.processError(error);
