@@ -2,6 +2,17 @@ import { ActivityModel, DayEntry, WeekEntry, MonthEntry, YearEntry, StructuredAc
 
 const MONTH_NAMES = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
+/**
+ * Fixes the Timezone Issue:
+ * Converts a Date object to a YYYY-MM-DD string based on LOCAL time.
+ */
+function formatLocalDate(date: Date): string {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
 // Internal types with non-null arrays for building the structure
 interface InternalWeekEntry extends Omit<WeekEntry, "days"> {
   days: DayEntry[];
@@ -37,10 +48,6 @@ function getWeekEnd(date: Date): Date {
   return weekEnd;
 }
 
-function formatDate(date: Date): string {
-  return date.toISOString().split("T")[0];
-}
-
 function createEmptyTotals() {
   return {
     distance_meters: 0,
@@ -51,26 +58,18 @@ function createEmptyTotals() {
   };
 }
 
-function createEmptyTotalsWithRaces() {
-  return {
-    ...createEmptyTotals(),
-    races_count: 0,
-  };
-}
-
-function addToTotals(totals: ReturnType<typeof createEmptyTotals> | ReturnType<typeof createEmptyTotalsWithRaces>, activity: ActivityModel) {
+function addToTotals(totals: ReturnType<typeof createEmptyTotals>, activity: ActivityModel) {
   totals.distance_meters += activity.distance_meters || 0;
   totals.duration_seconds += activity.duration_seconds || 0;
   totals.elevation_gain_meters += activity.elevation_gain_meters || 0;
   totals.activities_count += 1;
 
-  if ("races_count" in totals && activity.workout_type === "race") {
+  if (activity.workout_type === "race") {
     totals.races_count += 1;
   }
 }
 
 export function structureActivitiesLog(activities: ActivityModel[], minDate: string | null, maxDate: string | null): StructuredActivitiesLog {
-  // If no activities, return empty structure
   if (!minDate || !maxDate || activities.length === 0) {
     return {
       years: [],
@@ -78,37 +77,35 @@ export function structureActivitiesLog(activities: ActivityModel[], minDate: str
     };
   }
 
-  // Create a map of activities by date for quick lookup
-  const activitiesByDate = new Map<string, ActivityModel>();
+  // 1. Group activities by local date string
+  const activitiesByDate = new Map<string, ActivityModel[]>();
   for (const activity of activities) {
-    const dateKey = new Date(activity.start_time).toISOString().split("T")[0];
-    // If multiple activities on same day, keep the first one (they're sorted by start_time DESC)
-    if (!activitiesByDate.has(dateKey)) {
-      activitiesByDate.set(dateKey, activity);
-    }
+    // We create the date from the timestamp, then format it to the user's local YYYY-MM-DD
+    const dateKey = formatLocalDate(new Date(activity.start_time));
+    const dayGroup = activitiesByDate.get(dateKey) || [];
+    dayGroup.push(activity);
+    activitiesByDate.set(dateKey, dayGroup);
   }
 
-  // Extend range to complete weeks
   const startDate = getWeekStart(new Date(minDate));
   const endDate = getWeekEnd(new Date(maxDate));
 
-  // Build the structure using internal types
   const yearsMap = new Map<number, InternalYearEntry>();
-  const globalTotals = createEmptyTotalsWithRaces();
+  const globalTotals = createEmptyTotals();
 
   let currentDate = new Date(startDate);
   while (currentDate <= endDate) {
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth() + 1;
     const weekNumber = getISOWeekNumber(currentDate);
-    const dateStr = formatDate(currentDate);
+    const dateStr = formatLocalDate(currentDate); // Align with map key
 
     // Get or create year entry
     if (!yearsMap.has(year)) {
       yearsMap.set(year, {
         year,
         months: [],
-        totals: createEmptyTotalsWithRaces(),
+        totals: createEmptyTotals(),
       });
     }
     const yearEntry = yearsMap.get(year)!;
@@ -126,44 +123,43 @@ export function structureActivitiesLog(activities: ActivityModel[], minDate: str
     }
 
     // Get or create week entry
-    const weekStart = getWeekStart(currentDate);
-    const weekEnd = getWeekEnd(currentDate);
-    const weekStartStr = formatDate(weekStart);
+    const weekStartStr = formatLocalDate(getWeekStart(currentDate));
     let weekEntry = monthEntry.weeks.find((w) => w.startDate === weekStartStr);
     if (!weekEntry) {
       weekEntry = {
         weekNumber,
         startDate: weekStartStr,
-        endDate: formatDate(weekEnd),
+        endDate: formatLocalDate(getWeekEnd(currentDate)),
         days: [],
         totals: createEmptyTotals(),
       };
       monthEntry.weeks.push(weekEntry);
     }
 
-    // Create day entry
-    const activity = activitiesByDate.get(dateStr) || null;
+    // 2. Create day entry with multi-activity support
+    const dayActivities = activitiesByDate.get(dateStr) || [];
+
+    // We consider it a rest day only if there are NO activities
     const dayEntry: DayEntry = {
       date: dateStr,
       dayOfWeek: currentDate.getDay(),
-      isRestDay: activity === null,
-      activity,
+      isRestDay: dayActivities.length === 0,
+      activities: dayActivities, // Changed from 'activity' to 'activities'
     };
     weekEntry.days.push(dayEntry);
 
-    // Update totals if there's an activity
-    if (activity) {
+    // 3. Update totals for all activities on this day
+    for (const activity of dayActivities) {
       addToTotals(weekEntry.totals as ReturnType<typeof createEmptyTotals>, activity);
-      addToTotals(monthEntry.totals as ReturnType<typeof createEmptyTotals>, activity);
+      addToTotals(monthEntry.totals as ReturnType<typeof createEmptyTotals>, activity); // Same as week
       addToTotals(yearEntry.totals, activity);
       addToTotals(globalTotals, activity);
     }
 
-    // Move to next day
     currentDate.setDate(currentDate.getDate() + 1);
   }
 
-  // Sort and convert to final structure with null optimization
+  // Final Cleanup: Sort and Null-Optimization
   const internalYears = Array.from(yearsMap.values()).sort((a, b) => b.year - a.year);
 
   const years: YearEntry[] = internalYears.map((yearEntry) => {
@@ -175,14 +171,12 @@ export function structureActivitiesLog(activities: ActivityModel[], minDate: str
       const optimizedWeeks: WeekEntry[] = monthEntry.weeks.map((weekEntry) => {
         weekEntry.days.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
-        // If week has no activities, set days to null
         return {
           ...weekEntry,
           days: weekEntry.totals.activities_count === 0 ? null : weekEntry.days,
         };
       });
 
-      // If all weeks in month are empty, set weeks to null
       const allWeeksEmpty = optimizedWeeks.every((w) => w.totals.activities_count === 0);
       return {
         ...monthEntry,
@@ -190,7 +184,6 @@ export function structureActivitiesLog(activities: ActivityModel[], minDate: str
       };
     });
 
-    // If all months in year are empty, set months to null
     const allMonthsEmpty = optimizedMonths.every((m) => m.totals.activities_count === 0);
     return {
       ...yearEntry,

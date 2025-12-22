@@ -64,7 +64,7 @@ export interface DayEntry {
   date: string; // ISO date string (YYYY-MM-DD)
   dayOfWeek: number; // 0-6 (Sunday-Saturday)
   isRestDay: boolean;
-  activity: ActivityModel | null;
+  activities: ActivityModel[] | null;
 }
 
 export interface WeekEntry {
