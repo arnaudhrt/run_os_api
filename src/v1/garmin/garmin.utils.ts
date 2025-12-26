@@ -9,9 +9,9 @@ function mapGarminTypeToActivityType(typeKey: string): ActivityType {
   const type = typeKey.toLowerCase();
 
   // Running activities
-  if (type.includes("running") && !type.includes("trail")) return "run";
-  if (type.includes("trail_running") || type.includes("trail")) return "trail";
   if (type.includes("treadmill")) return "treadmill";
+  if (type.includes("trail_running") || type.includes("trail")) return "trail";
+  if (type.includes("running") && !type.includes("trail")) return "run";
 
   // Walking/Hiking
   if (type.includes("walking") || type.includes("walk")) return "walk";
@@ -59,7 +59,7 @@ export function convertGarminActivities(garminActivities: GarminActivity[], user
       garmin_activity_id: String(ga.activityId),
 
       activity_type: activityType,
-      workout_type: "uncategorized" as const,
+      workout_type: null,
       // Ensure the timestamp format is clean
       start_time: `${ga.startTimeGMT.replace(" ", "T")}Z`,
 

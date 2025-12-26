@@ -8,7 +8,7 @@ export interface ActivityModel {
   strava_activity_id?: number;
 
   activity_type: ActivityType;
-  workout_type: WorkoutType;
+  workout_type?: WorkoutType | null;
   start_time: string;
 
   distance_meters?: number;

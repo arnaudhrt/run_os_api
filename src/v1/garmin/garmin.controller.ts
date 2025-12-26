@@ -107,7 +107,7 @@ export class GarminController {
   public static async syncActivities(req: Request, res: Response): Promise<void> {
     try {
       const userId = req.dbUser!.id;
-      const { from_date } = req.query as { from_date?: string };
+      //const { from_date } = req.query as { from_date?: string };
 
       const account = await GarminData.getGarminAccountByUserId(userId);
       if (!account) {
@@ -118,6 +118,7 @@ export class GarminController {
       const client = await GarminData.createClientFromAccount(account);
 
       // Determine the "after" date
+      const from_date = "2025-01-01";
       let afterDate: Date | undefined;
       if (from_date) {
         afterDate = new Date(from_date);
