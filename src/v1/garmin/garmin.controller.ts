@@ -107,8 +107,6 @@ export class GarminController {
   public static async syncActivities(req: Request, res: Response): Promise<void> {
     try {
       const userId = req.dbUser!.id;
-      //const { from_date } = req.query as { from_date?: string };
-
       const account = await GarminData.getGarminAccountByUserId(userId);
       if (!account) {
         throw new ApiError(new Date().toISOString(), "Garmin account not connected", HttpStatusCode.NOT_FOUND);
@@ -116,14 +114,10 @@ export class GarminController {
 
       // Create authenticated client
       const client = await GarminData.createClientFromAccount(account);
-
-      // Determine the "after" date
-      // let afterDate: Date | undefined;
-      // if (from_date) {
-      //   afterDate = new Date(from_date);
-      // } else if (account.last_sync_at) {
-      // }
-      const syncDate = new Date("2025-11-01T00:00:00Z");
+      let syncDate: Date | undefined = undefined;
+      if (account.last_sync_at) {
+        syncDate = new Date(account.last_sync_at);
+      }
 
       // Fetch activities
       const garminActivities = await GarminData.fetchAllActivities(client, syncDate);
@@ -141,7 +135,7 @@ export class GarminController {
       await GarminData.updateGarminAccount(userId, {
         oauth1_token: newTokens?.oauth1,
         oauth2_token: newTokens?.oauth2,
-        last_sync_at: new Date(),
+        last_sync_at: new Date().toISOString(),
       });
 
       res.status(HttpStatusCode.OK).json({

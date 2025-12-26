@@ -86,7 +86,7 @@ export interface UpdateGarminAccountModel {
   garmin_password_encrypted?: string;
   oauth1_token?: object;
   oauth2_token?: object;
-  last_sync_at?: Date;
+  last_sync_at?: string;
 }
 
 export interface GarminConnectionStatus {
