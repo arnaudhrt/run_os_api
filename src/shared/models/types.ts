@@ -16,6 +16,14 @@ export type SyncStatus = "running" | "completed" | "failed";
 
 export type ActivitySource = "manual" | "strava" | "garmin";
 
+export type TimeSlot = "am" | "pm" | "single";
+
+export const activityTypes = ["run", "trail", "treadmill", "hike", "bike", "swim", "strength", "cross_training"] as const;
+
+export const workoutTypes = ["easy_run", "hills", "long_run", "tempo", "threshold", "intervals", "race", "base_endurance", "other"] as const;
+
+export const timeSlots = ["am", "pm", "single"] as const;
+
 // Extend Express Request type to include user context
 declare global {
   namespace Express {

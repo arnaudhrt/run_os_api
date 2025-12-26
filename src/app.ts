@@ -13,6 +13,7 @@ import phaseRoutes from "./v1/phases/phase.route";
 import activityRoutes from "./v1/activities/activity.route";
 import stravaRoutes from "./v1/strava/strava.route";
 import garminRoutes from "./v1/garmin/garmin.route";
+import plannedWorkoutRoutes from "./v1/planned-workouts/planned-workout.route";
 
 // Initialize Express app
 const app: Application = express();
@@ -76,6 +77,7 @@ app.use("/api/v1/phases", phaseRoutes);
 app.use("/api/v1/activities", activityRoutes);
 app.use("/api/v1/strava", stravaRoutes);
 app.use("/api/v1/garmin", garminRoutes);
+app.use("/api/v1/planned-workouts", plannedWorkoutRoutes);
 
 // Error handling middleware
 app.use(errorHandlerMiddleware);
