@@ -118,16 +118,15 @@ export class GarminController {
       const client = await GarminData.createClientFromAccount(account);
 
       // Determine the "after" date
-      // const from_date = "2025-01-01";
       // let afterDate: Date | undefined;
       // if (from_date) {
       //   afterDate = new Date(from_date);
       // } else if (account.last_sync_at) {
-      //   afterDate = new Date(account.last_sync_at);
       // }
+      const syncDate = new Date("2025-11-01T00:00:00Z");
 
       // Fetch activities
-      const garminActivities = await GarminData.fetchAllActivities(client);
+      const garminActivities = await GarminData.fetchAllActivities(client, syncDate);
       const convertedActivities = convertGarminActivities(garminActivities, userId);
 
       // Save activities to database

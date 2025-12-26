@@ -11,7 +11,6 @@ function mapStravaTypeToActivityType(stravaType: string, sportType: string): Act
   if (type.includes("run")) return "run";
   if (type.includes("trail")) return "trail";
   if (type.includes("treadmill")) return "treadmill";
-  if (type.includes("walk")) return "walk";
   if (type.includes("hike")) return "hike";
   if (type.includes("ride") || type.includes("bike") || type.includes("cycling")) return "bike";
   if (type.includes("swim")) return "swim";

@@ -13,8 +13,7 @@ function mapGarminTypeToActivityType(typeKey: string): ActivityType {
   if (type.includes("trail_running") || type.includes("trail")) return "trail";
   if (type.includes("running") && !type.includes("trail")) return "run";
 
-  // Walking/Hiking
-  if (type.includes("walking") || type.includes("walk")) return "walk";
+  // Hiking
   if (type.includes("hiking") || type.includes("hike")) return "hike";
 
   // Cycling
