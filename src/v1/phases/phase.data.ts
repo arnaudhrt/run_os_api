@@ -13,13 +13,13 @@ export class PhaseData {
   }
 
   public static async createPhase(data: CreatePhaseModel): Promise<string> {
-    const { cycle_id, phase_type, order, duration_weeks, start_date, end_date } = data;
+    const { cycle_id, phase_type, order, duration_weeks } = data;
 
     const result = await db.query(
-      `INSERT INTO phases (cycle_id, phase_type, "order", duration_weeks, start_date, end_date)
+      `INSERT INTO phases (cycle_id, phase_type, "order", duration_weeks)
        VALUES ($1, $2, $3, $4, $5, $6)
        RETURNING id`,
-      [cycle_id, phase_type, order, duration_weeks, start_date, end_date]
+      [cycle_id, phase_type, order, duration_weeks]
     );
 
     return result.rows[0].id;
@@ -34,8 +34,6 @@ export class PhaseData {
       phase_type: "phase_type",
       '"order"': "order",
       duration_weeks: "duration_weeks",
-      start_date: "start_date",
-      end_date: "end_date",
     };
 
     for (const [dbField, dataKey] of Object.entries(fieldMap)) {

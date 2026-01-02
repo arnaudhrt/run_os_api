@@ -2,16 +2,17 @@ import { Request, Response } from "express";
 import { ErrorHandler, ApiError } from "@/shared/utils/errorHandler";
 import { HttpStatusCode } from "@/shared/models/errors";
 import { TrainingCycleData } from "./training-cycle.data";
-import { TrainingCycleService } from "./training-cycle.service";
 import { Logger } from "@/shared/utils/logger";
-import { CreateTrainingCycleInput, UpdateTrainingCycleInput } from "./training-cycle.model";
+import { CreateTrainingCycleInput, PhaseInput, UpdateTrainingCycleInput } from "./training-cycle.model";
 
 export class TrainingCycleController {
   public static async getAllTrainingCycles(req: Request, res: Response): Promise<void> {
     try {
       const userId = req.dbUser!.id;
+      const year = parseInt(req.query.year as string, 10) || new Date().getFullYear();
+      const years = [String(year - 1), String(year), String(year + 1)];
 
-      const trainingCycles = await TrainingCycleData.getAllTrainingCycles(userId);
+      const trainingCycles = await TrainingCycleData.getAllTrainingCycles(userId, years);
 
       res.status(HttpStatusCode.OK).json({
         success: true,
@@ -54,9 +55,24 @@ export class TrainingCycleController {
   public static async createTrainingCycle(req: Request, res: Response): Promise<void> {
     try {
       const userId = req.dbUser!.id;
-      const body = req.body as Omit<CreateTrainingCycleInput, "user_id">;
+      const body = req.body as CreateTrainingCycleInput & { phases: PhaseInput[] };
+      const cycle = {
+        race_id: body.race_id,
+        name: body.name,
+        start_date: body.start_date,
+        end_date: body.end_date,
+        total_weeks: body.total_weeks,
+        user_id: userId,
+      };
+      const phases = body.phases.map((el, i) => {
+        return {
+          phase_type: el.phase_type,
+          duration_weeks: el.duration_weeks,
+          order: i,
+        };
+      });
 
-      const id = await TrainingCycleService.createTrainingCycle({ ...body, user_id: userId });
+      const id = await TrainingCycleData.createTrainingCycleWithPhases(cycle, phases);
 
       res.status(HttpStatusCode.CREATED).json({
         success: true,

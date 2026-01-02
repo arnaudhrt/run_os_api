@@ -1,28 +1,19 @@
 import { PoolClient } from "pg";
 import { db } from "@/shared/database/database";
-import { TrainingCycleModel, UpdateTrainingCycleInput } from "./training-cycle.model";
-
-interface CalculatedPhase {
-  phase_type: string;
-  order: number;
-  duration_weeks: number;
-  start_date: string;
-  end_date: string;
-}
-
-interface CalculatedCycle {
-  user_id: string;
-  race_id?: string;
-  name: string;
-  start_date: string;
-  end_date: string;
-  total_weeks: number;
-  phases: CalculatedPhase[];
-}
+import { CreateTrainingCycleInput, PhaseInput, TrainingCycleModel, UpdateTrainingCycleInput } from "./training-cycle.model";
 
 export class TrainingCycleData {
-  public static async getAllTrainingCycles(userId: string): Promise<TrainingCycleModel[]> {
-    const result = await db.query("SELECT * FROM training_cycles WHERE user_id = $1 ORDER BY start_date ASC", [userId]);
+  public static async getAllTrainingCycles(userId: string, years: string[]): Promise<TrainingCycleModel[]> {
+    const result = await db.query(
+      `SELECT * FROM training_cycles
+       WHERE user_id = $1
+       AND (
+         EXTRACT(YEAR FROM start_date) = ANY($2::int[])
+         OR EXTRACT(YEAR FROM end_date) = ANY($2::int[])
+       )
+       ORDER BY start_date ASC`,
+      [userId, years]
+    );
     return result.rows;
   }
 
@@ -36,22 +27,22 @@ export class TrainingCycleData {
     return result.rows[0]?.race_date || null;
   }
 
-  public static async createTrainingCycleWithPhases(data: CalculatedCycle): Promise<string> {
+  public static async createTrainingCycleWithPhases(cycle: CreateTrainingCycleInput, phases: (PhaseInput & { order: number })[]): Promise<string> {
     return db.transaction(async (client: PoolClient) => {
       const cycleResult = await client.query(
         `INSERT INTO training_cycles (user_id, race_id, name, start_date, end_date, total_weeks)
          VALUES ($1, $2, $3, $4, $5, $6)
          RETURNING id`,
-        [data.user_id, data.race_id || null, data.name, data.start_date, data.end_date, data.total_weeks]
+        [cycle.user_id, cycle.race_id || null, cycle.name, cycle.start_date, cycle.end_date, cycle.total_weeks]
       );
 
       const cycleId = cycleResult.rows[0].id;
 
-      for (const phase of data.phases) {
+      for (const phase of phases) {
         await client.query(
-          `INSERT INTO phases (cycle_id, phase_type, "order", duration_weeks, start_date, end_date)
+          `INSERT INTO phases (cycle_id, phase_type, "order", duration_weeks)
            VALUES ($1, $2, $3, $4, $5, $6)`,
-          [cycleId, phase.phase_type, phase.order, phase.duration_weeks, phase.start_date, phase.end_date]
+          [cycleId, phase.phase_type, phase.order, phase.duration_weeks]
         );
       }
 

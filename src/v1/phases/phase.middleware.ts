@@ -7,16 +7,12 @@ const createPhaseSchema = z.object({
   phase_type: z.enum(["base", "build", "peak", "taper", "recovery", "off"]),
   order: z.number().int().positive(),
   duration_weeks: z.number().int().positive(),
-  start_date: z.string().min(1),
-  end_date: z.string().min(1),
 });
 
 const updatePhaseSchema = z.object({
   phase_type: z.enum(["base", "build", "peak", "taper", "recovery", "off"]).optional(),
   order: z.number().int().positive().optional(),
   duration_weeks: z.number().int().positive().optional(),
-  start_date: z.string().min(1).optional(),
-  end_date: z.string().min(1).optional(),
 });
 
 export const verifyCreatePhaseFields = (req: Request, res: Response, next: NextFunction): void => {
