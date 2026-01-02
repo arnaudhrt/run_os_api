@@ -2,15 +2,22 @@ import { Request, Response } from "express";
 import { ErrorHandler, ApiError } from "@/shared/utils/errorHandler";
 import { HttpStatusCode } from "@/shared/models/errors";
 import { PhaseData } from "./phase.data";
+import { TrainingCycleData } from "@/v1/training-cycles/training-cycle.data";
 import { Logger } from "@/shared/utils/logger";
 import { CreatePhaseModel, UpdatePhaseModel } from "./phase.model";
 
 export class PhaseController {
-  public static async getAllPhases(req: Request, res: Response): Promise<void> {
+  public static async getPhasesByCycleId(req: Request, res: Response): Promise<void> {
     try {
+      const cycleId = req.params.cycleId;
       const userId = req.dbUser!.id;
 
-      const phases = await PhaseData.getAllPhases(userId);
+      const cycle = await TrainingCycleData.getTrainingCycleById(cycleId, userId);
+      if (!cycle) {
+        throw new ApiError(new Date().toISOString(), "Training cycle not found", HttpStatusCode.NOT_FOUND);
+      }
+
+      const phases = await PhaseData.getPhasesByCycleId(cycleId);
 
       res.status(HttpStatusCode.OK).json({
         success: true,
@@ -18,7 +25,7 @@ export class PhaseController {
       });
     } catch (error) {
       const apiError = ErrorHandler.processError(error);
-      Logger.error(apiError, { class: "PhaseController", method: "getAllPhases" });
+      Logger.error(apiError, { class: "PhaseController", method: "getPhasesByCycleId" });
       res.status(apiError.statusCode).json({
         success: false,
         message: apiError.message,
@@ -31,8 +38,13 @@ export class PhaseController {
       const id = req.params.id;
       const userId = req.dbUser!.id;
 
-      const phase = await PhaseData.getPhaseById(id, userId);
+      const phase = await PhaseData.getPhaseById(id);
       if (!phase) {
+        throw new ApiError(new Date().toISOString(), "Phase not found", HttpStatusCode.NOT_FOUND);
+      }
+
+      const cycle = await TrainingCycleData.getTrainingCycleById(phase.cycle_id, userId);
+      if (!cycle) {
         throw new ApiError(new Date().toISOString(), "Phase not found", HttpStatusCode.NOT_FOUND);
       }
 
@@ -53,9 +65,14 @@ export class PhaseController {
   public static async createPhase(req: Request, res: Response): Promise<void> {
     try {
       const userId = req.dbUser!.id;
-      const body = req.body as Omit<CreatePhaseModel, "user_id">;
+      const body = req.body as CreatePhaseModel;
 
-      const id = await PhaseData.createPhase({ ...body, user_id: userId });
+      const cycle = await TrainingCycleData.getTrainingCycleById(body.cycle_id, userId);
+      if (!cycle) {
+        throw new ApiError(new Date().toISOString(), "Training cycle not found", HttpStatusCode.NOT_FOUND);
+      }
+
+      const id = await PhaseData.createPhase(body);
 
       res.status(HttpStatusCode.CREATED).json({
         success: true,
@@ -77,8 +94,13 @@ export class PhaseController {
       const userId = req.dbUser!.id;
       const body = req.body as UpdatePhaseModel;
 
-      const phase = await PhaseData.getPhaseById(id, userId);
+      const phase = await PhaseData.getPhaseById(id);
       if (!phase) {
+        throw new ApiError(new Date().toISOString(), "Phase not found", HttpStatusCode.NOT_FOUND);
+      }
+
+      const cycle = await TrainingCycleData.getTrainingCycleById(phase.cycle_id, userId);
+      if (!cycle) {
         throw new ApiError(new Date().toISOString(), "Phase not found", HttpStatusCode.NOT_FOUND);
       }
 
@@ -102,8 +124,13 @@ export class PhaseController {
       const id = req.params.id;
       const userId = req.dbUser!.id;
 
-      const phase = await PhaseData.getPhaseById(id, userId);
+      const phase = await PhaseData.getPhaseById(id);
       if (!phase) {
+        throw new ApiError(new Date().toISOString(), "Phase not found", HttpStatusCode.NOT_FOUND);
+      }
+
+      const cycle = await TrainingCycleData.getTrainingCycleById(phase.cycle_id, userId);
+      if (!cycle) {
         throw new ApiError(new Date().toISOString(), "Phase not found", HttpStatusCode.NOT_FOUND);
       }
 

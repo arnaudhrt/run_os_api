@@ -2,27 +2,24 @@ import { db } from "@/shared/database/database";
 import { PhaseModel, CreatePhaseModel, UpdatePhaseModel } from "./phase.model";
 
 export class PhaseData {
-  public static async getAllPhases(userId: string): Promise<PhaseModel[]> {
-    const result = await db.query("SELECT * FROM phases WHERE user_id = $1 ORDER BY start_date ASC", [userId]);
+  public static async getPhasesByCycleId(cycleId: string): Promise<PhaseModel[]> {
+    const result = await db.query('SELECT * FROM phases WHERE cycle_id = $1 ORDER BY "order" ASC', [cycleId]);
     return result.rows;
   }
 
-  public static async getPhaseById(id: string, userId: string): Promise<PhaseModel | null> {
-    const result = await db.query("SELECT * FROM phases WHERE id = $1 AND user_id = $2", [id, userId]);
+  public static async getPhaseById(id: string): Promise<PhaseModel | null> {
+    const result = await db.query("SELECT * FROM phases WHERE id = $1", [id]);
     return result.rows[0] || null;
   }
 
   public static async createPhase(data: CreatePhaseModel): Promise<string> {
-    const { user_id, race_id, phase_type, start_date, end_date, description, weekly_volume_target_km, weekly_elevation_target_m } = data;
+    const { cycle_id, phase_type, order, duration_weeks, start_date, end_date } = data;
 
     const result = await db.query(
-      `INSERT INTO phases (
-        user_id, race_id, phase_type, start_date, end_date, description,
-        weekly_volume_target_km, weekly_elevation_target_m
-      )
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+      `INSERT INTO phases (cycle_id, phase_type, "order", duration_weeks, start_date, end_date)
+       VALUES ($1, $2, $3, $4, $5, $6)
        RETURNING id`,
-      [user_id, race_id || null, phase_type, start_date, end_date, description || null, weekly_volume_target_km || null, weekly_elevation_target_m || null]
+      [cycle_id, phase_type, order, duration_weeks, start_date, end_date]
     );
 
     return result.rows[0].id;
@@ -34,13 +31,11 @@ export class PhaseData {
     let paramIndex = 1;
 
     const fieldMap: Record<string, keyof UpdatePhaseModel> = {
-      race_id: "race_id",
       phase_type: "phase_type",
+      '"order"': "order",
+      duration_weeks: "duration_weeks",
       start_date: "start_date",
       end_date: "end_date",
-      description: "description",
-      weekly_volume_target_km: "weekly_volume_target_km",
-      weekly_elevation_target_m: "weekly_elevation_target_m",
     };
 
     for (const [dbField, dataKey] of Object.entries(fieldMap)) {
@@ -60,5 +55,9 @@ export class PhaseData {
 
   public static async deletePhase(id: string): Promise<void> {
     await db.query("DELETE FROM phases WHERE id = $1", [id]);
+  }
+
+  public static async deletePhasesByCycleId(cycleId: string): Promise<void> {
+    await db.query("DELETE FROM phases WHERE cycle_id = $1", [cycleId]);
   }
 }

@@ -3,23 +3,20 @@ import { z } from "zod";
 import { handleValidationError } from "@/shared/utils/validationHandler";
 
 const createPhaseSchema = z.object({
-  race_id: z.string().uuid().optional(),
+  cycle_id: z.string().uuid(),
   phase_type: z.enum(["base", "build", "peak", "taper", "recovery", "off"]),
+  order: z.number().int().positive(),
+  duration_weeks: z.number().int().positive(),
   start_date: z.string().min(1),
   end_date: z.string().min(1),
-  description: z.string().optional(),
-  weekly_volume_target_km: z.number().nonnegative().optional(),
-  weekly_elevation_target_m: z.number().nonnegative().optional(),
 });
 
 const updatePhaseSchema = z.object({
-  race_id: z.string().uuid().nullable().optional(),
   phase_type: z.enum(["base", "build", "peak", "taper", "recovery", "off"]).optional(),
+  order: z.number().int().positive().optional(),
+  duration_weeks: z.number().int().positive().optional(),
   start_date: z.string().min(1).optional(),
   end_date: z.string().min(1).optional(),
-  description: z.string().optional(),
-  weekly_volume_target_km: z.number().nonnegative().optional(),
-  weekly_elevation_target_m: z.number().nonnegative().optional(),
 });
 
 export const verifyCreatePhaseFields = (req: Request, res: Response, next: NextFunction): void => {

@@ -5,7 +5,7 @@ import { verifyToken, requireUser } from "@/v1/auth/auth.middleware";
 
 const router = express.Router();
 
-router.get("/", verifyToken, requireUser, PhaseController.getAllPhases);
+router.get("/cycle/:cycleId", verifyToken, requireUser, PhaseController.getPhasesByCycleId);
 router.get("/:id", verifyToken, requireUser, PhaseController.getPhaseById);
 router.post("/", verifyToken, requireUser, verifyCreatePhaseFields, PhaseController.createPhase);
 router.put("/:id", verifyToken, requireUser, verifyUpdatePhaseFields, PhaseController.updatePhase);
