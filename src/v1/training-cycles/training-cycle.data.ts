@@ -1,8 +1,17 @@
 import { PoolClient } from "pg";
 import { db } from "@/shared/database/database";
-import { CreateTrainingCycleInput, PhaseInput, TrainingCycleModel, UpdateTrainingCycleInput } from "./training-cycle.model";
+import { CreateTrainingCycleInput, PhaseInput, PhaseModel, TrainingCycleModel, UpdateTrainingCycleInput } from "./training-cycle.model";
 
 export class TrainingCycleData {
+  private static async getPhasesByCycleIds(cycleIds: string[]): Promise<PhaseModel[]> {
+    if (cycleIds.length === 0) return [];
+    const result = await db.query(
+      `SELECT * FROM phases WHERE cycle_id = ANY($1) ORDER BY "order" ASC`,
+      [cycleIds]
+    );
+    return result.rows;
+  }
+
   public static async getAllTrainingCycles(userId: string, years: string[]): Promise<TrainingCycleModel[]> {
     const result = await db.query(
       `SELECT * FROM training_cycles
@@ -14,12 +23,26 @@ export class TrainingCycleData {
        ORDER BY start_date ASC`,
       [userId, years]
     );
-    return result.rows;
+
+    const cycles = result.rows;
+    const cycleIds = cycles.map((c: TrainingCycleModel) => c.id);
+    const phases = await this.getPhasesByCycleIds(cycleIds);
+
+    return cycles.map((cycle: TrainingCycleModel) => ({
+      ...cycle,
+      phases: phases.filter((p: PhaseModel) => p.cycle_id === cycle.id),
+    }));
   }
 
   public static async getTrainingCycleById(id: string, userId: string): Promise<TrainingCycleModel | null> {
     const result = await db.query("SELECT * FROM training_cycles WHERE id = $1 AND user_id = $2", [id, userId]);
-    return result.rows[0] || null;
+    if (!result.rows[0]) return null;
+
+    const phases = await this.getPhasesByCycleIds([id]);
+    return {
+      ...result.rows[0],
+      phases,
+    };
   }
 
   public static async getRaceDateById(raceId: string, userId: string): Promise<string | null> {

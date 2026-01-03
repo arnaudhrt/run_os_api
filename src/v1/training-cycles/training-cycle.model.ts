@@ -1,5 +1,13 @@
 import { PhaseType } from "@/shared/models/types";
 
+export interface PhaseModel {
+  id: string;
+  cycle_id: string;
+  phase_type: PhaseType;
+  order: number;
+  duration_weeks: number;
+}
+
 export interface TrainingCycleModel {
   id: string;
   user_id: string;
@@ -9,6 +17,7 @@ export interface TrainingCycleModel {
   end_date: string;
   total_weeks: number;
   created_at: string;
+  phases: PhaseModel[];
 }
 
 export interface PhaseInput {
