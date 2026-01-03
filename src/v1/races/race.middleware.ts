@@ -25,7 +25,10 @@ const updateRaceSchema = z.object({
   priority: z.union([z.literal(1), z.literal(2), z.literal(3)]).optional(),
   notes: z.string().optional(),
   result_time_seconds: z.number().positive().optional(),
-  result_place: z.string().optional(),
+  result_place_overall: z.number().positive().optional(),
+  result_place_gender: z.number().positive().optional(),
+  result_place_category: z.number().positive().optional(),
+  category_name: z.string().optional(),
   is_completed: z.boolean().optional(),
 });
 

@@ -55,7 +55,10 @@ export class RaceData {
       priority: "priority",
       notes: "notes",
       result_time_seconds: "result_time_seconds",
-      result_place: "result_place",
+      result_place_overall: "result_place_overall",
+      result_place_gender: "result_place_gender",
+      result_place_category: "result_place_category",
+      category_name: "category_name",
       is_completed: "is_completed",
     };
 
