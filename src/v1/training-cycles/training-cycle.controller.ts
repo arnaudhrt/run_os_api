@@ -56,21 +56,9 @@ export class TrainingCycleController {
     try {
       const userId = req.dbUser!.id;
       const body = req.body as CreateTrainingCycleInput & { phases: PhaseInput[] };
-      const cycle = {
-        race_id: body.race_id,
-        name: body.name,
-        start_date: body.start_date,
-        end_date: body.end_date,
-        total_weeks: body.total_weeks,
-        user_id: userId,
-      };
-      const phases = body.phases.map((el, i) => {
-        return {
-          phase_type: el.phase_type,
-          duration_weeks: el.duration_weeks,
-          order: i,
-        };
-      });
+
+      const { phases, ...cycle } = body;
+      cycle.user_id = userId;
 
       const id = await TrainingCycleData.createTrainingCycleWithPhases(cycle, phases);
 

@@ -14,6 +14,7 @@ export interface TrainingCycleModel {
 export interface PhaseInput {
   phase_type: PhaseType;
   duration_weeks: number;
+  order: number;
 }
 
 export interface CreateTrainingCycleInput {

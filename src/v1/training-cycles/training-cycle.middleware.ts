@@ -5,6 +5,7 @@ import { handleValidationError } from "@/shared/utils/validationHandler";
 const phaseInputSchema = z.object({
   phase_type: z.enum(["base", "build", "peak", "taper", "recovery", "off"]),
   duration_weeks: z.number().int().positive(),
+  order: z.number().int().positive(),
 });
 
 const createTrainingCycleSchema = z.object({

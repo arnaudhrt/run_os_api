@@ -27,7 +27,7 @@ export class TrainingCycleData {
     return result.rows[0]?.race_date || null;
   }
 
-  public static async createTrainingCycleWithPhases(cycle: CreateTrainingCycleInput, phases: (PhaseInput & { order: number })[]): Promise<string> {
+  public static async createTrainingCycleWithPhases(cycle: CreateTrainingCycleInput, phases: PhaseInput[]): Promise<string> {
     return db.transaction(async (client: PoolClient) => {
       const cycleResult = await client.query(
         `INSERT INTO training_cycles (user_id, race_id, name, start_date, end_date, total_weeks)
@@ -41,7 +41,7 @@ export class TrainingCycleData {
       for (const phase of phases) {
         await client.query(
           `INSERT INTO phases (cycle_id, phase_type, "order", duration_weeks)
-           VALUES ($1, $2, $3, $4, $5, $6)`,
+           VALUES ($1, $2, $3, $4)`,
           [cycleId, phase.phase_type, phase.order, phase.duration_weeks]
         );
       }
