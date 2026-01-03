@@ -58,3 +58,10 @@ export interface ActivitySearchParams {
 export type CreateActivityModel = Omit<ActivityModel, "id" | "user_id" | "created_at" | "updated_at">;
 export type CreateActivityWithUserModel = Omit<ActivityModel, "id" | "created_at" | "updated_at">;
 export type UpdateActivityModel = Partial<Omit<ActivityModel, "id" | "user_id" | "created_at" | "updated_at">>;
+
+export interface WeeklyStats {
+  week: string; // format: "2025W1"
+  volume: number; // distance in km
+  elevation: number; // elevation gain in meters
+  time: number; // duration in seconds
+}

@@ -11,6 +11,7 @@ const router = express.Router();
 
 router.get("/", verifyToken, requireUser, ActivityController.getAllUserActivities);
 router.get("/search", verifyToken, requireUser, ActivityController.getUserActivitiesBySearch);
+router.get("/weekly-stats/:year", verifyToken, requireUser, ActivityController.getWeeklyStats);
 router.post("/", verifyToken, requireUser, verifyCreateActivityFields, ActivityController.createActivity);
 router.post("/bulk", verifyToken, requireUser, verifyCreateBulkActivityFields, ActivityController.createBulkActivity);
 router.put("/:id", verifyToken, verifyUpdateActivityFields, ActivityController.updateActivity);

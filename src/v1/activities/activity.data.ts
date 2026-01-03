@@ -4,6 +4,7 @@ import {
   ActivitySearchParams,
   CreateActivityWithUserModel,
   UpdateActivityModel,
+  WeeklyStats,
 } from "./activity.model";
 
 export class ActivityData {
@@ -230,4 +231,64 @@ export class ActivityData {
       maxDate: result.rows[0]?.max_date || null,
     };
   }
+
+  public static async getWeeklyStats(userId: string, startDate: Date, totalWeeks: number): Promise<WeeklyStats[]> {
+    const endDate = new Date(startDate);
+    endDate.setDate(endDate.getDate() + totalWeeks * 7);
+
+    const result = await db.query(
+      `SELECT
+        TO_CHAR(start_time, 'IYYY') || 'W' || TO_CHAR(start_time, 'IW') as week,
+        COALESCE(SUM(distance_meters), 0) as volume,
+        COALESCE(SUM(elevation_gain_meters), 0) as elevation,
+        COALESCE(SUM(duration_seconds), 0) as time
+      FROM activities
+      WHERE user_id = $1
+        AND start_time >= $2
+        AND start_time < $3
+      GROUP BY TO_CHAR(start_time, 'IYYY'), TO_CHAR(start_time, 'IW')
+      ORDER BY TO_CHAR(start_time, 'IYYY'), TO_CHAR(start_time, 'IW')`,
+      [userId, startDate.toISOString(), endDate.toISOString()]
+    );
+
+    // Create a map of existing data
+    const dataMap = new Map<string, { volume: number; elevation: number; time: number }>();
+    for (const row of result.rows) {
+      dataMap.set(row.week, {
+        volume: Math.round(parseFloat(row.volume) / 1000 * 10) / 10, // Convert to km with 1 decimal
+        elevation: Math.round(parseFloat(row.elevation)),
+        time: Math.round(parseFloat(row.time)),
+      });
+    }
+
+    // Generate all weeks and fill with data or zeros
+    const weeks: WeeklyStats[] = [];
+    const currentDate = new Date(startDate);
+
+    for (let i = 0; i < totalWeeks; i++) {
+      const year = currentDate.getFullYear();
+      const weekNum = getISOWeek(currentDate);
+      const weekKey = `${year}W${weekNum}`;
+
+      const data = dataMap.get(weekKey);
+      weeks.push({
+        week: weekKey,
+        volume: data?.volume ?? 0,
+        elevation: data?.elevation ?? 0,
+        time: data?.time ?? 0,
+      });
+
+      currentDate.setDate(currentDate.getDate() + 7);
+    }
+
+    return weeks;
+  }
+}
+
+function getISOWeek(date: Date): number {
+  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const dayNum = d.getUTCDay() || 7;
+  d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  return Math.ceil((((d.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
 }

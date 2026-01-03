@@ -5,6 +5,8 @@ import { ActivityData } from "./activity.data";
 import { Logger } from "@/shared/utils/logger";
 import { CreateActivityModel, ActivitySearchParams } from "./activity.model";
 
+const TOTAL_WEEKS = 104;
+
 export class ActivityController {
   public static async getAllUserActivities(req: Request, res: Response): Promise<void> {
     try {
@@ -135,6 +137,34 @@ export class ActivityController {
     } catch (error) {
       const apiError = ErrorHandler.processError(error);
       Logger.error(apiError, { class: "ActivityController", method: "deleteActivity" });
+      res.status(apiError.statusCode).json({
+        success: false,
+        message: apiError.message,
+      });
+    }
+  }
+
+  public static async getWeeklyStats(req: Request, res: Response): Promise<void> {
+    try {
+      const userId = req.dbUser!.id;
+      const year = parseInt(req.params.year, 10);
+
+      if (isNaN(year)) {
+        throw new ApiError(new Date().toISOString(), "Invalid year parameter", HttpStatusCode.BAD_REQUEST);
+      }
+
+      // Start from July 1st of the previous year
+      const startDate = new Date(year - 1, 6, 1); // Month is 0-indexed, so 6 = July
+
+      const weeklyStats = await ActivityData.getWeeklyStats(userId, startDate, TOTAL_WEEKS);
+
+      res.status(HttpStatusCode.OK).json({
+        success: true,
+        data: weeklyStats,
+      });
+    } catch (error) {
+      const apiError = ErrorHandler.processError(error);
+      Logger.error(apiError, { class: "ActivityController", method: "getWeeklyStats" });
       res.status(apiError.statusCode).json({
         success: false,
         message: apiError.message,
