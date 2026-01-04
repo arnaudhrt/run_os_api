@@ -14,7 +14,7 @@ export class PlannedWorkoutController {
       };
 
       const plannedWorkouts = await PlannedWorkoutData.getByDateRange(req.dbUser!.id, params);
-
+      console.log(plannedWorkouts);
       res.status(HttpStatusCode.OK).json({
         success: true,
         data: plannedWorkouts,

@@ -7,10 +7,7 @@ import {
 } from "./planned-workout.model";
 
 export class PlannedWorkoutData {
-  public static async getByDateRange(
-    userId: string,
-    params: PlannedWorkoutDateRangeParams
-  ): Promise<PlannedWorkoutModel[]> {
+  public static async getByDateRange(userId: string, params: PlannedWorkoutDateRangeParams): Promise<PlannedWorkoutModel[]> {
     const result = await db.query(
       `SELECT * FROM planned_workouts
        WHERE user_id = $1 AND planned_date >= $2 AND planned_date <= $3
@@ -76,17 +73,11 @@ export class PlannedWorkoutData {
     fields.push(`updated_at = CURRENT_TIMESTAMP`);
     values.push(id);
 
-    await db.query(
-      `UPDATE planned_workouts SET ${fields.join(", ")} WHERE id = $${paramIndex}`,
-      values
-    );
+    await db.query(`UPDATE planned_workouts SET ${fields.join(", ")} WHERE id = $${paramIndex}`, values);
   }
 
   public static async linkActivity(id: string, activityId: string): Promise<void> {
-    await db.query(
-      `UPDATE planned_workouts SET activity_id = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2`,
-      [activityId, id]
-    );
+    await db.query(`UPDATE planned_workouts SET activity_id = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2`, [activityId, id]);
   }
 
   public static async delete(id: string): Promise<void> {
