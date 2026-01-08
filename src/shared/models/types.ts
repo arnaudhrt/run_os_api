@@ -1,28 +1,37 @@
-export type PhaseType = "base" | "build" | "peak" | "taper" | "recovery" | "off";
+// Define const arrays first, then derive types from them
 
-export type ActivityType = "run" | "trail" | "treadmill" | "hike" | "bike" | "swim" | "strength" | "cross_training";
+export const phaseTypes = ["base", "build", "peak", "taper", "recovery", "off"] as const;
+export type PhaseType = (typeof phaseTypes)[number];
 
-export type RaceType = "run" | "half_marathon" | "marathon" | "ultra_marathon" | "triathlon" | "trail" | "ultra_trail";
+export const activityTypes = ["run", "trail", "treadmill", "hike", "strength", "cardio"] as const;
+export type ActivityType = (typeof activityTypes)[number];
 
-export type WorkoutType = "easy_run" | "hills" | "long_run" | "tempo" | "threshold" | "intervals" | "race" | "base_endurance" | "other";
+export const raceTypes = ["run", "5k", "10k", "half_marathon", "marathon", "ultra_marathon", "trail", "ultra_trail"] as const;
+export type RaceType = (typeof raceTypes)[number];
 
-export type DataSource = "manual" | "strava" | "garmin";
+export const runningWorkoutTypes = ["base_run", "hills", "long_run", "tempo", "threshold", "intervals", "race", "other"] as const;
+export type RunningWorkoutType = (typeof runningWorkoutTypes)[number];
 
-export type RecordType = "distance" | "trail" | "performance";
+export const strengthWorkoutTypes = ["push", "pull", "legs", "back", "chest", "shoulders", "abs", "arms", "upper_body", "lower_body", "full_body"] as const;
+export type StrengthWorkoutType = (typeof strengthWorkoutTypes)[number];
 
-export type ChatRole = "user" | "assistant" | "system";
+export const allWorkoutTypes = [...runningWorkoutTypes, ...strengthWorkoutTypes] as const;
+export type WorkoutType = RunningWorkoutType | StrengthWorkoutType;
 
-export type SyncStatus = "running" | "completed" | "failed";
+export const recordTypes = ["distance", "trail", "performance"] as const;
+export type RecordType = (typeof recordTypes)[number];
 
-export type ActivitySource = "manual" | "strava" | "garmin";
+export const chatRoles = ["user", "assistant", "system"] as const;
+export type ChatRole = (typeof chatRoles)[number];
 
-export type TimeSlot = "am" | "pm" | "single";
+export const syncStatuses = ["running", "completed", "failed"] as const;
+export type SyncStatus = (typeof syncStatuses)[number];
 
-export const activityTypes = ["run", "trail", "treadmill", "hike", "bike", "swim", "strength", "cross_training"] as const;
-
-export const workoutTypes = ["easy_run", "hills", "long_run", "tempo", "threshold", "intervals", "race", "base_endurance", "other"] as const;
+export const dataSources = ["manual", "strava", "garmin"] as const;
+export type DataSource = (typeof dataSources)[number];
 
 export const timeSlots = ["am", "pm", "single"] as const;
+export type TimeSlot = (typeof timeSlots)[number];
 
 // Extend Express Request type to include user context
 declare global {

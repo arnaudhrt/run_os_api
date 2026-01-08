@@ -1,49 +1,33 @@
 import { NextFunction, Request, Response } from "express";
 import { z } from "zod";
 import { handleValidationError } from "@/shared/utils/validationHandler";
-
-const activityTypes = ["run", "trail", "treadmill", "walk", "hike", "bike", "swim", "strength", "cross_training"] as const;
-const workoutTypes = ["easy_run", "hills", "long_run", "tempo", "threshold", "intervals", "race", "other"] as const;
+import { activityTypes, allWorkoutTypes, dataSources } from "@/shared/models/types";
 
 const createActivitySchema = z.object({
+  source: z.enum(dataSources).optional(),
+  garmin_activity_id: z.string().optional(),
+  strava_activity_id: z.number().optional(),
   activity_type: z.enum(activityTypes),
-  workout_type: z.enum(workoutTypes),
+  workout_type: z.enum(allWorkoutTypes).nullable().optional(),
   start_time: z.string().min(1),
   distance_meters: z.number().nonnegative().optional(),
   duration_seconds: z.number().nonnegative().optional(),
   elevation_gain_meters: z.number().nonnegative().optional(),
-  elevation_loss_meters: z.number().nonnegative().optional(),
   avg_heart_rate: z.number().positive().optional(),
   max_heart_rate: z.number().positive().optional(),
-  avg_pace_min_per_km: z.number().positive().optional(),
-  best_pace_min_per_km: z.number().positive().optional(),
-  avg_cadence: z.number().positive().optional(),
+  avg_temperature_celsius: z.number().optional(),
+  is_pr: z.boolean().optional(),
+  has_pain: z.string().optional(),
   rpe: z.number().min(1).max(10).optional(),
   notes: z.string().optional(),
-  avg_temperature_celsius: z.number().optional(),
+  shoes_id: z.string().uuid().optional(),
 });
 
 const createBulkActivitySchema = z.object({
   activities: z.array(createActivitySchema).min(1),
 });
 
-const updateActivitySchema = z.object({
-  activity_type: z.enum(activityTypes).optional(),
-  workout_type: z.enum(workoutTypes).optional(),
-  start_time: z.string().min(1).optional(),
-  distance_meters: z.number().nonnegative().optional(),
-  duration_seconds: z.number().nonnegative().optional(),
-  elevation_gain_meters: z.number().nonnegative().optional(),
-  elevation_loss_meters: z.number().nonnegative().optional(),
-  avg_heart_rate: z.number().positive().optional(),
-  max_heart_rate: z.number().positive().optional(),
-  avg_pace_min_per_km: z.number().positive().optional(),
-  best_pace_min_per_km: z.number().positive().optional(),
-  avg_cadence: z.number().positive().optional(),
-  rpe: z.number().min(1).max(10).optional(),
-  notes: z.string().optional(),
-  avg_temperature_celsius: z.number().optional(),
-});
+const updateActivitySchema = createActivitySchema.partial();
 
 export const verifyCreateActivityFields = (req: Request, res: Response, next: NextFunction): void => {
   try {

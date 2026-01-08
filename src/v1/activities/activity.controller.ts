@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { ErrorHandler, ApiError } from "@/shared/utils/errorHandler";
 import { HttpStatusCode } from "@/shared/models/errors";
 import { ActivityData } from "./activity.data";
+import { ActivityService } from "./activity.service";
 import { Logger } from "@/shared/utils/logger";
 import { CreateActivityModel, ActivitySearchParams } from "./activity.model";
 
@@ -156,7 +157,7 @@ export class ActivityController {
       // Start from July 1st of the previous year
       const startDate = new Date(year - 1, 6, 1); // Month is 0-indexed, so 6 = July
 
-      const weeklyStats = await ActivityData.getWeeklyStats(userId, startDate, TOTAL_WEEKS);
+      const weeklyStats = await ActivityService.getWeeklyStats(userId, startDate, TOTAL_WEEKS);
 
       res.status(HttpStatusCode.OK).json({
         success: true,

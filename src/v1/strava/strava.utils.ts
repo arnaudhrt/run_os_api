@@ -1,5 +1,5 @@
 import { CreateActivityWithUserModel } from "@/v1/activities/activity.model";
-import { ActivityType, WorkoutType } from "@/shared/models/types";
+import { ActivityType, RunningWorkoutType } from "@/shared/models/types";
 import { StravaActivity } from "./strava.model";
 
 /**
@@ -12,18 +12,16 @@ function mapStravaTypeToActivityType(stravaType: string, sportType: string): Act
   if (type.includes("trail")) return "trail";
   if (type.includes("treadmill")) return "treadmill";
   if (type.includes("hike")) return "hike";
-  if (type.includes("ride") || type.includes("bike") || type.includes("cycling")) return "bike";
-  if (type.includes("swim")) return "swim";
   if (type.includes("weight") || type.includes("strength")) return "strength";
 
-  return "cross_training";
+  return "cardio";
 }
 
 /**
  * Convert Strava workout_type to our WorkoutType
  * Strava workout_type for runs: 0=default, 1=race, 2=long run, 3=workout
  */
-function mapStravaWorkoutType(workoutType?: number): WorkoutType {
+function mapStravaWorkoutType(workoutType?: number): RunningWorkoutType {
   switch (workoutType) {
     case 1:
       return "race";

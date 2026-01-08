@@ -4,7 +4,6 @@ import {
   ActivitySearchParams,
   CreateActivityWithUserModel,
   UpdateActivityModel,
-  WeeklyStats,
 } from "./activity.model";
 
 export class ActivityData {
@@ -48,16 +47,11 @@ export class ActivityData {
       `INSERT INTO activities (
         user_id, source, garmin_activity_id, strava_activity_id,
         activity_type, workout_type, start_time,
-        distance_meters, duration_seconds, elapsed_duration_seconds,
-        elevation_gain_meters, elevation_loss_meters,
-        avg_heart_rate, max_heart_rate,
-        avg_speed_mps, max_speed_mps,
-        steps, avg_cadence, calories,
-        aerobic_training_effect, anaerobic_training_effect, training_effect_label,
-        time_in_zone_1, time_in_zone_2, time_in_zone_3, time_in_zone_4, time_in_zone_5,
-        avg_temperature_celsius, is_pr, rpe, notes
+        distance_meters, duration_seconds, elevation_gain_meters,
+        avg_heart_rate, max_heart_rate, avg_temperature_celsius,
+        is_pr, has_pain, rpe, notes, shoes_id
       )
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)
        RETURNING id`,
       [
         data.user_id,
@@ -69,28 +63,15 @@ export class ActivityData {
         data.start_time,
         data.distance_meters || null,
         data.duration_seconds || null,
-        data.elapsed_duration_seconds || null,
         data.elevation_gain_meters || null,
-        data.elevation_loss_meters || null,
         data.avg_heart_rate || null,
         data.max_heart_rate || null,
-        data.avg_speed_mps || null,
-        data.max_speed_mps || null,
-        data.steps || null,
-        data.avg_cadence || null,
-        data.calories || null,
-        data.aerobic_training_effect || null,
-        data.anaerobic_training_effect || null,
-        data.training_effect_label || null,
-        data.time_in_zone_1 || null,
-        data.time_in_zone_2 || null,
-        data.time_in_zone_3 || null,
-        data.time_in_zone_4 || null,
-        data.time_in_zone_5 || null,
         data.avg_temperature_celsius || null,
         data.is_pr || false,
+        data.has_pain || null,
         data.rpe || null,
         data.notes || null,
+        data.shoes_id || null,
       ]
     );
 
@@ -106,16 +87,11 @@ export class ActivityData {
           `INSERT INTO activities (
             user_id, source, garmin_activity_id, strava_activity_id,
             activity_type, workout_type, start_time,
-            distance_meters, duration_seconds, elapsed_duration_seconds,
-            elevation_gain_meters, elevation_loss_meters,
-            avg_heart_rate, max_heart_rate,
-            avg_speed_mps, max_speed_mps,
-            steps, avg_cadence, calories,
-            aerobic_training_effect, anaerobic_training_effect, training_effect_label,
-            time_in_zone_1, time_in_zone_2, time_in_zone_3, time_in_zone_4, time_in_zone_5,
-            avg_temperature_celsius, is_pr, rpe, notes
+            distance_meters, duration_seconds, elevation_gain_meters,
+            avg_heart_rate, max_heart_rate, avg_temperature_celsius,
+            is_pr, has_pain, rpe, notes, shoes_id
           )
-           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31)
+           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)
            ON CONFLICT (garmin_activity_id) WHERE garmin_activity_id IS NOT NULL DO NOTHING
            RETURNING id`,
           [
@@ -128,28 +104,15 @@ export class ActivityData {
             activity.start_time,
             activity.distance_meters || null,
             activity.duration_seconds || null,
-            activity.elapsed_duration_seconds || null,
             activity.elevation_gain_meters || null,
-            activity.elevation_loss_meters || null,
             activity.avg_heart_rate || null,
             activity.max_heart_rate || null,
-            activity.avg_speed_mps || null,
-            activity.max_speed_mps || null,
-            activity.steps || null,
-            activity.avg_cadence || null,
-            activity.calories || null,
-            activity.aerobic_training_effect || null,
-            activity.anaerobic_training_effect || null,
-            activity.training_effect_label || null,
-            activity.time_in_zone_1 || null,
-            activity.time_in_zone_2 || null,
-            activity.time_in_zone_3 || null,
-            activity.time_in_zone_4 || null,
-            activity.time_in_zone_5 || null,
             activity.avg_temperature_celsius || null,
             activity.is_pr || false,
+            activity.has_pain || null,
             activity.rpe || null,
             activity.notes || null,
+            activity.shoes_id || null,
           ]
         );
         if (result.rows[0]?.id) {
@@ -175,28 +138,15 @@ export class ActivityData {
       start_time: "start_time",
       distance_meters: "distance_meters",
       duration_seconds: "duration_seconds",
-      elapsed_duration_seconds: "elapsed_duration_seconds",
       elevation_gain_meters: "elevation_gain_meters",
-      elevation_loss_meters: "elevation_loss_meters",
       avg_heart_rate: "avg_heart_rate",
       max_heart_rate: "max_heart_rate",
-      avg_speed_mps: "avg_speed_mps",
-      max_speed_mps: "max_speed_mps",
-      steps: "steps",
-      avg_cadence: "avg_cadence",
-      calories: "calories",
-      aerobic_training_effect: "aerobic_training_effect",
-      anaerobic_training_effect: "anaerobic_training_effect",
-      training_effect_label: "training_effect_label",
-      time_in_zone_1: "time_in_zone_1",
-      time_in_zone_2: "time_in_zone_2",
-      time_in_zone_3: "time_in_zone_3",
-      time_in_zone_4: "time_in_zone_4",
-      time_in_zone_5: "time_in_zone_5",
       avg_temperature_celsius: "avg_temperature_celsius",
       is_pr: "is_pr",
+      has_pain: "has_pain",
       rpe: "rpe",
       notes: "notes",
+      shoes_id: "shoes_id",
     };
 
     for (const [dbField, dataKey] of Object.entries(fieldMap)) {
@@ -232,10 +182,11 @@ export class ActivityData {
     };
   }
 
-  public static async getWeeklyStats(userId: string, startDate: Date, totalWeeks: number): Promise<WeeklyStats[]> {
-    const endDate = new Date(startDate);
-    endDate.setDate(endDate.getDate() + totalWeeks * 7);
-
+  public static async getWeeklyStatsRaw(
+    userId: string,
+    startDate: Date,
+    endDate: Date
+  ): Promise<{ week: string; volume: string; elevation: string; time: string }[]> {
     const result = await db.query(
       `SELECT
         TO_CHAR(start_time, 'IYYY') || 'W' || TO_CHAR(start_time, 'IW') as week,
@@ -251,44 +202,6 @@ export class ActivityData {
       [userId, startDate.toISOString(), endDate.toISOString()]
     );
 
-    // Create a map of existing data
-    const dataMap = new Map<string, { volume: number; elevation: number; time: number }>();
-    for (const row of result.rows) {
-      dataMap.set(row.week, {
-        volume: Math.round(parseFloat(row.volume) / 1000 * 10) / 10, // Convert to km with 1 decimal
-        elevation: Math.round(parseFloat(row.elevation)),
-        time: Math.round(parseFloat(row.time)),
-      });
-    }
-
-    // Generate all weeks and fill with data or zeros
-    const weeks: WeeklyStats[] = [];
-    const currentDate = new Date(startDate);
-
-    for (let i = 0; i < totalWeeks; i++) {
-      const year = currentDate.getFullYear();
-      const weekNum = getISOWeek(currentDate);
-      const weekKey = `${year}W${weekNum}`;
-
-      const data = dataMap.get(weekKey);
-      weeks.push({
-        week: weekKey,
-        volume: data?.volume ?? 0,
-        elevation: data?.elevation ?? 0,
-        time: data?.time ?? 0,
-      });
-
-      currentDate.setDate(currentDate.getDate() + 7);
-    }
-
-    return weeks;
+    return result.rows;
   }
-}
-
-function getISOWeek(date: Date): number {
-  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
-  const dayNum = d.getUTCDay() || 7;
-  d.setUTCDate(d.getUTCDate() + 4 - dayNum);
-  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-  return Math.ceil((((d.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
 }

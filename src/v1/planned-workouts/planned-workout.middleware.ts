@@ -1,13 +1,13 @@
 import { NextFunction, Request, Response } from "express";
 import { z } from "zod";
 import { handleValidationError } from "@/shared/utils/validationHandler";
-import { timeSlots, activityTypes, workoutTypes } from "@/shared/models/types";
+import { timeSlots, activityTypes, allWorkoutTypes } from "@/shared/models/types";
 
 const createPlannedWorkoutSchema = z.object({
   planned_date: z.string().min(1),
   time_slot: z.enum(timeSlots),
   activity_type: z.enum(activityTypes),
-  workout_type: z.enum(workoutTypes),
+  workout_type: z.enum(allWorkoutTypes),
   target_distance_meters: z.number().nonnegative().optional(),
   target_duration_seconds: z.number().nonnegative().optional(),
   description: z.string().optional(),
@@ -17,7 +17,7 @@ const updatePlannedWorkoutSchema = z.object({
   planned_date: z.string().min(1).optional(),
   time_slot: z.enum(timeSlots).optional(),
   activity_type: z.enum(activityTypes).optional(),
-  workout_type: z.enum(workoutTypes).optional(),
+  workout_type: z.enum(allWorkoutTypes).optional(),
   target_distance_meters: z.number().nonnegative().nullable().optional(),
   target_duration_seconds: z.number().nonnegative().nullable().optional(),
   description: z.string().nullable().optional(),

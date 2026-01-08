@@ -16,16 +16,10 @@ function mapGarminTypeToActivityType(typeKey: string): ActivityType {
   // Hiking
   if (type.includes("hiking") || type.includes("hike")) return "hike";
 
-  // Cycling
-  if (type.includes("cycling") || type.includes("biking") || type.includes("bike")) return "bike";
-
-  // Swimming
-  if (type.includes("swimming") || type.includes("swim")) return "swim";
-
   // Strength
   if (type.includes("strength") || type.includes("weight")) return "strength";
 
-  return "cross_training";
+  return "cardio";
 }
 
 /**
