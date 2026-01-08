@@ -2,10 +2,9 @@ import { Request, Response } from "express";
 import { ErrorHandler, ApiError } from "@/shared/utils/errorHandler";
 import { HttpStatusCode } from "@/shared/models/errors";
 import { GarminData } from "./garmin.data";
+import { GarminService } from "./garmin.service";
 import { Logger } from "@/shared/utils/logger";
-import { ActivityData } from "@/v1/activities/activity.data";
 import type { GarminConnectRequest } from "./garmin.model";
-import { convertGarminActivities } from "./garmin.utils";
 
 export class GarminController {
   /**
@@ -20,23 +19,7 @@ export class GarminController {
         throw new ApiError(new Date().toISOString(), "Email and password are required", HttpStatusCode.BAD_REQUEST);
       }
 
-      // Try to login to Garmin Connect
-      const client = await GarminData.createGarminClient(email, password);
-
-      // Export tokens for storage
-      const tokens = GarminData.exportTokens(client);
-
-      // Encrypt password before storing
-      const encryptedPassword = GarminData.encryptPassword(password);
-
-      // Store account in database
-      await GarminData.createGarminAccount({
-        user_id: userId,
-        garmin_email: email,
-        garmin_password_encrypted: encryptedPassword,
-        oauth1_token: tokens?.oauth1,
-        oauth2_token: tokens?.oauth2,
-      });
+      await GarminService.connectAccount(userId, email, password);
 
       res.status(HttpStatusCode.OK).json({
         success: true,
@@ -112,37 +95,13 @@ export class GarminController {
         throw new ApiError(new Date().toISOString(), "Garmin account not connected", HttpStatusCode.NOT_FOUND);
       }
 
-      // Create authenticated client
-      const client = await GarminData.createClientFromAccount(account);
-      let syncDate: Date | undefined = undefined;
-      if (account.last_sync_at) {
-        syncDate = new Date(account.last_sync_at);
-      }
-
-      // Fetch activities
-      const garminActivities = await GarminData.fetchAllActivities(client, syncDate);
-      const convertedActivities = convertGarminActivities(garminActivities, userId);
-
-      // Save activities to database
-      let savedCount = 0;
-      if (convertedActivities.length > 0) {
-        const ids = await ActivityData.createBulk(convertedActivities);
-        savedCount = ids.length;
-      }
-
-      // Update tokens and last_sync_at
-      const newTokens = GarminData.exportTokens(client);
-      await GarminData.updateGarminAccount(userId, {
-        oauth1_token: newTokens?.oauth1,
-        oauth2_token: newTokens?.oauth2,
-        last_sync_at: new Date().toISOString(),
-      });
+      const result = await GarminService.syncActivities(userId, account);
 
       res.status(HttpStatusCode.OK).json({
         success: true,
         data: {
-          synced: savedCount,
-          fetched: garminActivities.length,
+          synced: result.saved,
+          fetched: result.fetched,
         },
       });
     } catch (error) {

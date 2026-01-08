@@ -3,7 +3,7 @@ import { z } from "zod";
 import { handleValidationError } from "@/shared/utils/validationHandler";
 import { activityTypes, allWorkoutTypes, dataSources } from "@/shared/models/types";
 
-const createActivitySchema = z.object({
+export const createActivitySchema = z.object({
   source: z.enum(dataSources).optional(),
   garmin_activity_id: z.string().optional(),
   strava_activity_id: z.number().optional(),
@@ -23,11 +23,11 @@ const createActivitySchema = z.object({
   shoes_id: z.string().uuid().optional(),
 });
 
-const createBulkActivitySchema = z.object({
+export const createBulkActivitySchema = z.object({
   activities: z.array(createActivitySchema).min(1),
 });
 
-const updateActivitySchema = createActivitySchema.partial();
+export const updateActivitySchema = createActivitySchema.partial();
 
 export const verifyCreateActivityFields = (req: Request, res: Response, next: NextFunction): void => {
   try {
