@@ -107,51 +107,75 @@ export class StravaController {
 
   public static async syncActivities(req: Request, res: Response): Promise<void> {
     try {
-      // TODO: Remove hardcoded userId and restore auth check
-      const userId = "9cdcf797-f80d-467d-a430-d511ddd343ed";
-      const { from_date } = req.query as { from_date?: string };
+      const userId = req.dbUser!.id;
+      const { start_date, end_date } = req.query as { start_date?: string; end_date?: string };
 
       const account = await StravaData.getStravaAccountByUserId(userId);
       if (!account) {
         throw new ApiError(new Date().toISOString(), "Strava account not connected", HttpStatusCode.NOT_FOUND);
       }
 
-      const accessToken = await StravaData.getValidAccessToken(account);
+      // Parse date parameters if provided
+      const startDate = start_date ? new Date(start_date) : undefined;
+      const endDate = end_date ? new Date(end_date) : undefined;
 
-      // Determine the "after" timestamp:
-      // 1. Use last_sync_at if available
-      // 2. Otherwise use from_date param if provided
-      // 3. Otherwise fetch all activities (undefined)
-      let after: number | undefined;
-      if (account.last_sync_at) {
-        after = Math.floor(new Date(account.last_sync_at).getTime() / 1000);
-      } else if (from_date) {
-        after = Math.floor(new Date(from_date).getTime() / 1000);
+      // Validate dates if provided
+      if (startDate && isNaN(startDate.getTime())) {
+        throw new ApiError(new Date().toISOString(), "Invalid start_date format. Use ISO 8601 format.", HttpStatusCode.BAD_REQUEST);
+      }
+      if (endDate && isNaN(endDate.getTime())) {
+        throw new ApiError(new Date().toISOString(), "Invalid end_date format. Use ISO 8601 format.", HttpStatusCode.BAD_REQUEST);
+      }
+      if (startDate && endDate && startDate > endDate) {
+        throw new ApiError(new Date().toISOString(), "start_date must be before end_date", HttpStatusCode.BAD_REQUEST);
       }
 
-      const stravaActivities = await StravaData.fetchAllActivities(accessToken, after);
-      const convertedActivities = convertStravaActivities(stravaActivities, userId);
+      const accessToken = await StravaData.getValidAccessToken(account);
 
-      // Write to JSON file for inspection
-      const fs = await import("fs");
-      const path = await import("path");
-      const outputPath = path.join(process.cwd(), "strava_activities_debug.json");
-      fs.writeFileSync(
-        outputPath,
-        JSON.stringify(
-          {
-            strava_raw: stravaActivities,
-            converted: convertedActivities,
-            count: stravaActivities.length,
-          },
-          null,
-          2
-        )
+      // Determine the "after" and "before" timestamps for fetching activities
+      // If date range provided, use it; otherwise fall back to last_sync_at
+      let after: number | undefined;
+      let before: number | undefined;
+
+      if (startDate || endDate) {
+        after = startDate ? Math.floor(startDate.getTime() / 1000) : undefined;
+        before = endDate ? Math.floor(endDate.getTime() / 1000) : undefined;
+      } else if (account.last_sync_at) {
+        after = Math.floor(new Date(account.last_sync_at).getTime() / 1000);
+      }
+
+      // Fetch activities from Strava
+      const stravaActivities = await StravaData.fetchAllActivities(accessToken, after, before);
+
+      // Get existing activity timestamps for duplicate detection
+      const dbActivities = await ActivityData.getAllByUserId(userId);
+      const existingTimestamps = new Set(dbActivities.map((a) => a.start_time));
+
+      // Filter out duplicates (activities with matching start_date)
+      const newActivities = stravaActivities.filter(
+        (sa) => !existingTimestamps.has(sa.start_date)
       );
+
+      // Convert and save new activities
+      const convertedActivities = convertStravaActivities(newActivities, userId);
+      let savedCount = 0;
+      if (convertedActivities.length > 0) {
+        const ids = await ActivityData.createBulk(convertedActivities);
+        savedCount = ids.length;
+      }
+
+      // Update last_sync_at
+      await StravaData.updateStravaAccount(userId, {
+        last_sync_at: new Date(),
+      });
 
       res.status(HttpStatusCode.OK).json({
         success: true,
-        message: `Wrote ${stravaActivities.length} activities to ${outputPath}`,
+        data: {
+          fetched: stravaActivities.length,
+          duplicates_skipped: stravaActivities.length - newActivities.length,
+          saved: savedCount,
+        },
       });
     } catch (error) {
       const apiError = ErrorHandler.processError(error);

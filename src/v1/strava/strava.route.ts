@@ -18,7 +18,7 @@ router.get("/status", verifyToken, requireUser, StravaController.getConnectionSt
 router.post("/disconnect", verifyToken, requireUser, StravaController.disconnect);
 
 // Sync activities from Strava
-router.post("/sync", StravaController.syncActivities);
+router.post("/sync", verifyToken, requireUser, StravaController.syncActivities);
 
 // Get Strava user account
 router.get("/user", verifyToken, requireUser, StravaController.getStravaUser);

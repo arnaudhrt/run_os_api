@@ -83,40 +83,48 @@ export class ActivityData {
 
     await db.transaction(async (client) => {
       for (const activity of activities) {
-        const result = await client.query(
-          `INSERT INTO activities (
-            user_id, source, garmin_activity_id, strava_activity_id,
-            activity_type, workout_type, start_time,
-            distance_meters, duration_seconds, elevation_gain_meters,
-            avg_heart_rate, max_heart_rate, avg_temperature_celsius,
-            is_pr, has_pain, rpe, notes, shoes_id
-          )
-           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)
-           ON CONFLICT (garmin_activity_id) WHERE garmin_activity_id IS NOT NULL DO NOTHING
-           RETURNING id`,
-          [
-            activity.user_id,
-            activity.source,
-            activity.garmin_activity_id || null,
-            activity.strava_activity_id || null,
-            activity.activity_type,
-            activity.workout_type,
-            activity.start_time,
-            activity.distance_meters || null,
-            activity.duration_seconds || null,
-            activity.elevation_gain_meters || null,
-            activity.avg_heart_rate || null,
-            activity.max_heart_rate || null,
-            activity.avg_temperature_celsius || null,
-            activity.is_pr || false,
-            activity.has_pain || null,
-            activity.rpe || null,
-            activity.notes || null,
-            activity.shoes_id || null,
-          ]
-        );
-        if (result.rows[0]?.id) {
-          ids.push(result.rows[0].id);
+        try {
+          const result = await client.query(
+            `INSERT INTO activities (
+              user_id, source, garmin_activity_id, strava_activity_id,
+              activity_type, workout_type, start_time,
+              distance_meters, duration_seconds, elevation_gain_meters,
+              avg_heart_rate, max_heart_rate, avg_temperature_celsius,
+              is_pr, has_pain, rpe, notes, shoes_id
+            )
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)
+             ON CONFLICT (garmin_activity_id) WHERE garmin_activity_id IS NOT NULL DO NOTHING
+             RETURNING id`,
+            [
+              activity.user_id,
+              activity.source,
+              activity.garmin_activity_id || null,
+              activity.strava_activity_id || null,
+              activity.activity_type,
+              activity.workout_type,
+              activity.start_time,
+              activity.distance_meters || null,
+              activity.duration_seconds || null,
+              activity.elevation_gain_meters || null,
+              activity.avg_heart_rate || null,
+              activity.max_heart_rate || null,
+              activity.avg_temperature_celsius || null,
+              activity.is_pr || false,
+              activity.has_pain || null,
+              activity.rpe || null,
+              activity.notes || null,
+              activity.shoes_id || null,
+            ]
+          );
+          if (result.rows[0]?.id) {
+            ids.push(result.rows[0].id);
+          }
+        } catch (error) {
+          // Skip duplicate entries (unique constraint violation on user_id + start_time)
+          if ((error as { code?: string }).code === "23505") {
+            continue;
+          }
+          throw error;
         }
       }
     });

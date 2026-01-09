@@ -164,7 +164,7 @@ export class StravaData {
     return response.json();
   }
 
-  public static async fetchAllActivities(accessToken: string, after?: number): Promise<StravaActivity[]> {
+  public static async fetchAllActivities(accessToken: string, after?: number, before?: number): Promise<StravaActivity[]> {
     const allActivities: StravaActivity[] = [];
     let page = 1;
     const perPage = 100;
@@ -174,6 +174,7 @@ export class StravaData {
         page,
         perPage,
         after,
+        before,
       });
 
       if (activities.length === 0) break;

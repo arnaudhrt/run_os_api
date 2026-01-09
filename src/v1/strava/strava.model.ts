@@ -99,6 +99,8 @@ export interface StravaActivity {
   elev_low?: number;
   workout_type?: number;
   description?: string;
+  average_temp?: number;
+  pr_count: number;
 }
 
 export interface StravaAccountModel {

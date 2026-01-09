@@ -1,0 +1,410 @@
+{
+  "summary": {
+    "total_strava_activities": 58,
+    "total_db_activities": 43,
+    "matching_timestamps": 42,
+    "match_percentage": "72.41%"
+  },
+  "sample_db_timestamps": [
+    {
+      "db_start_time": "2026-01-09T01:53:33Z",
+      "source": "garmin",
+      "garmin_id": "21488097393"
+    },
+    {
+      "db_start_time": "2026-01-07T01:37:40Z",
+      "source": "garmin",
+      "garmin_id": "21467567192"
+    },
+    {
+      "db_start_time": "2026-01-06T01:05:37Z",
+      "source": "garmin",
+      "garmin_id": "21456491481"
+    },
+    {
+      "db_start_time": "2026-01-05T00:52:47Z",
+      "source": "garmin",
+      "garmin_id": "21456490734"
+    },
+    {
+      "db_start_time": "2026-01-01T01:06:18Z",
+      "source": "garmin",
+      "garmin_id": "21407593187"
+    },
+    {
+      "db_start_time": "2025-12-23T01:40:47Z",
+      "source": "garmin",
+      "garmin_id": "21327864754"
+    },
+    {
+      "db_start_time": "2025-12-22T11:43:37Z",
+      "source": "garmin",
+      "garmin_id": "21323762332"
+    },
+    {
+      "db_start_time": "2025-12-19T01:07:48Z",
+      "source": "garmin",
+      "garmin_id": "21294545990"
+    },
+    {
+      "db_start_time": "2025-12-18T00:31:44Z",
+      "source": "garmin",
+      "garmin_id": "21286012547"
+    },
+    {
+      "db_start_time": "2025-12-13T21:59:59Z",
+      "source": "garmin",
+      "garmin_id": "21250610106"
+    }
+  ],
+  "matches": [
+    {
+      "strava_id": 14948048337,
+      "strava_name": "Morning Run",
+      "strava_start_date": "2025-06-29T03:06:19Z",
+      "db_match": false
+    },
+    {
+      "strava_id": 15171910060,
+      "strava_name": "Arnaud’s back in the game ✊",
+      "strava_start_date": "2025-07-20T03:16:38Z",
+      "db_match": false
+    },
+    {
+      "strava_id": 15251861651,
+      "strava_name": "Evening Run",
+      "strava_start_date": "2025-07-27T10:58:08Z",
+      "db_match": false
+    },
+    {
+      "strava_id": 15252215341,
+      "strava_name": "Course à pied dans l'après-midi",
+      "strava_start_date": "2025-07-27T10:58:09Z",
+      "db_match": false
+    },
+    {
+      "strava_id": 15982110822,
+      "strava_name": "Morning Hike",
+      "strava_start_date": "2025-09-10T01:52:10Z",
+      "db_match": false
+    },
+    {
+      "strava_id": 15982217269,
+      "strava_name": "Morning Run",
+      "strava_start_date": "2025-09-30T02:17:22Z",
+      "db_match": false
+    },
+    {
+      "strava_id": 16005155908,
+      "strava_name": "Morning Run",
+      "strava_start_date": "2025-10-02T01:31:45Z",
+      "db_match": false
+    },
+    {
+      "strava_id": 16016160497,
+      "strava_name": "Morning Run",
+      "strava_start_date": "2025-10-03T02:12:53Z",
+      "db_match": false
+    },
+    {
+      "strava_id": 16025940753,
+      "strava_name": "Morning Run",
+      "strava_start_date": "2025-10-04T01:54:07Z",
+      "db_match": false
+    },
+    {
+      "strava_id": 16040489097,
+      "strava_name": "Evening Run",
+      "strava_start_date": "2025-10-05T11:03:45Z",
+      "db_match": false
+    },
+    {
+      "strava_id": 16058083585,
+      "strava_name": "Morning Run",
+      "strava_start_date": "2025-10-07T00:51:15Z",
+      "db_match": false
+    },
+    {
+      "strava_id": 16070002619,
+      "strava_name": "Morning Run",
+      "strava_start_date": "2025-10-08T01:17:27Z",
+      "db_match": false
+    },
+    {
+      "strava_id": 16081018428,
+      "strava_name": "Hill intervals",
+      "strava_start_date": "2025-10-09T00:49:26Z",
+      "db_match": false
+    },
+    {
+      "strava_id": 16100929817,
+      "strava_name": "Morning Run",
+      "strava_start_date": "2025-10-11T00:34:26Z",
+      "db_match": false
+    },
+    {
+      "strava_id": 16115563045,
+      "strava_name": "Course à pied dans l'après-midi",
+      "strava_start_date": "2025-10-12T10:28:13Z",
+      "db_match": true
+    },
+    {
+      "strava_id": 16133036719,
+      "strava_name": "Course à pied le matin",
+      "strava_start_date": "2025-10-14T00:40:49Z",
+      "db_match": true
+    },
+    {
+      "strava_id": 16144512775,
+      "strava_name": "Course à pied le matin",
+      "strava_start_date": "2025-10-15T01:00:19Z",
+      "db_match": true
+    },
+    {
+      "strava_id": 16155257009,
+      "strava_name": "Course à pied le matin",
+      "strava_start_date": "2025-10-16T00:54:58Z",
+      "db_match": true
+    },
+    {
+      "strava_id": 16175370351,
+      "strava_name": "Morning run",
+      "strava_start_date": "2025-10-18T00:26:30Z",
+      "db_match": true
+    },
+    {
+      "strava_id": 16186554759,
+      "strava_name": "Randonnée le matin",
+      "strava_start_date": "2025-10-19T02:15:29Z",
+      "db_match": true
+    },
+    {
+      "strava_id": 16206751328,
+      "strava_name": "Course à pied le matin",
+      "strava_start_date": "2025-10-21T00:53:30Z",
+      "db_match": true
+    },
+    {
+      "strava_id": 16217712197,
+      "strava_name": "Tempo in the storm",
+      "strava_start_date": "2025-10-22T00:48:17Z",
+      "db_match": true
+    },
+    {
+      "strava_id": 16246674530,
+      "strava_name": "Course à pied le matin",
+      "strava_start_date": "2025-10-25T00:09:11Z",
+      "db_match": true
+    },
+    {
+      "strava_id": 16270579206,
+      "strava_name": "Entraînement aux poids en soirée",
+      "strava_start_date": "2025-10-27T11:34:03Z",
+      "db_match": true
+    },
+    {
+      "strava_id": 16277211851,
+      "strava_name": "Course à pied le matin",
+      "strava_start_date": "2025-10-28T00:41:57Z",
+      "db_match": true
+    },
+    {
+      "strava_id": 16288335576,
+      "strava_name": "Course à pied le matin",
+      "strava_start_date": "2025-10-29T01:41:53Z",
+      "db_match": true
+    },
+    {
+      "strava_id": 16316802602,
+      "strava_name": "Course à pied le matin",
+      "strava_start_date": "2025-11-01T00:25:52Z",
+      "db_match": true
+    },
+    {
+      "strava_id": 16327036665,
+      "strava_name": "Course à pied le matin",
+      "strava_start_date": "2025-11-02T00:26:38Z",
+      "db_match": true
+    },
+    {
+      "strava_id": 16347547604,
+      "strava_name": "Course à pied le matin",
+      "strava_start_date": "2025-11-04T00:44:12Z",
+      "db_match": true
+    },
+    {
+      "strava_id": 16369527355,
+      "strava_name": "Course à pied le matin",
+      "strava_start_date": "2025-11-06T00:50:55Z",
+      "db_match": true
+    },
+    {
+      "strava_id": 16379889173,
+      "strava_name": "Course à pied le matin",
+      "strava_start_date": "2025-11-07T00:57:46Z",
+      "db_match": true
+    },
+    {
+      "strava_id": 16399573285,
+      "strava_name": "Course à pied le matin",
+      "strava_start_date": "2025-11-09T00:04:31Z",
+      "db_match": true
+    },
+    {
+      "strava_id": 16420523450,
+      "strava_name": "Course à pied le matin",
+      "strava_start_date": "2025-11-11T00:50:51Z",
+      "db_match": true
+    },
+    {
+      "strava_id": 16441609281,
+      "strava_name": "Course à pied le matin",
+      "strava_start_date": "2025-11-13T01:15:54Z",
+      "db_match": true
+    },
+    {
+      "strava_id": 16451698662,
+      "strava_name": "Course à pied le matin",
+      "strava_start_date": "2025-11-14T01:02:35Z",
+      "db_match": true
+    },
+    {
+      "strava_id": 16470229742,
+      "strava_name": "Course à pied le matin",
+      "strava_start_date": "2025-11-15T23:00:34Z",
+      "db_match": true
+    },
+    {
+      "strava_id": 16490328867,
+      "strava_name": "Morning trail",
+      "strava_start_date": "2025-11-17T23:47:53Z",
+      "db_match": true
+    },
+    {
+      "strava_id": 16500702241,
+      "strava_name": "Easy jog",
+      "strava_start_date": "2025-11-19T00:08:43Z",
+      "db_match": true
+    },
+    {
+      "strava_id": 16539147785,
+      "strava_name": "Sunday run",
+      "strava_start_date": "2025-11-23T01:15:22Z",
+      "db_match": true
+    },
+    {
+      "strava_id": 16557765326,
+      "strava_name": "Course à pied le matin",
+      "strava_start_date": "2025-11-25T00:29:54Z",
+      "db_match": true
+    },
+    {
+      "strava_id": 16567940347,
+      "strava_name": "Course à pied le matin",
+      "strava_start_date": "2025-11-26T00:20:02Z",
+      "db_match": true
+    },
+    {
+      "strava_id": 16577997526,
+      "strava_name": "Course à pied le matin",
+      "strava_start_date": "2025-11-27T00:19:39Z",
+      "db_match": true
+    },
+    {
+      "strava_id": 16605435089,
+      "strava_name": "Course à pied le matin",
+      "strava_start_date": "2025-11-29T23:51:23Z",
+      "db_match": false
+    },
+    {
+      "strava_id": 16634433744,
+      "strava_name": "Course à pied le matin",
+      "strava_start_date": "2025-12-03T01:03:44Z",
+      "db_match": true
+    },
+    {
+      "strava_id": 16644102174,
+      "strava_name": "Morning Run",
+      "strava_start_date": "2025-12-04T00:46:31Z",
+      "db_match": false
+    },
+    {
+      "strava_id": 16671278366,
+      "strava_name": "Course à pied le matin",
+      "strava_start_date": "2025-12-07T00:06:24Z",
+      "db_match": true
+    },
+    {
+      "strava_id": 16689838184,
+      "strava_name": "Course à pied le matin",
+      "strava_start_date": "2025-12-09T01:01:38Z",
+      "db_match": true
+    },
+    {
+      "strava_id": 16709960853,
+      "strava_name": "Course à pied le matin",
+      "strava_start_date": "2025-12-11T00:56:32Z",
+      "db_match": true
+    },
+    {
+      "strava_id": 16735705677,
+      "strava_name": "Course à pied le matin",
+      "strava_start_date": "2025-12-13T21:59:59Z",
+      "db_match": true
+    },
+    {
+      "strava_id": 16772583743,
+      "strava_name": "Course à pied le matin",
+      "strava_start_date": "2025-12-18T00:31:44Z",
+      "db_match": true
+    },
+    {
+      "strava_id": 16781467882,
+      "strava_name": "Treadmill run",
+      "strava_start_date": "2025-12-19T01:07:48Z",
+      "db_match": true
+    },
+    {
+      "strava_id": 16811802482,
+      "strava_name": "Entraînement aux poids en soirée",
+      "strava_start_date": "2025-12-22T11:43:37Z",
+      "db_match": true
+    },
+    {
+      "strava_id": 16816296721,
+      "strava_name": "Course à pied le matin",
+      "strava_start_date": "2025-12-23T01:40:47Z",
+      "db_match": true
+    },
+    {
+      "strava_id": 16899466692,
+      "strava_name": "2026 kick off run",
+      "strava_start_date": "2026-01-01T01:06:18Z",
+      "db_match": true
+    },
+    {
+      "strava_id": 16951729494,
+      "strava_name": "Entraînement aux poids le matin",
+      "strava_start_date": "2026-01-05T00:52:47Z",
+      "db_match": true
+    },
+    {
+      "strava_id": 16951729542,
+      "strava_name": "Course à pied le matin",
+      "strava_start_date": "2026-01-06T01:05:37Z",
+      "db_match": true
+    },
+    {
+      "strava_id": 16963709114,
+      "strava_name": "Course à pied le matin",
+      "strava_start_date": "2026-01-07T01:37:40Z",
+      "db_match": true
+    },
+    {
+      "strava_id": 16985908065,
+      "strava_name": "Course à pied le matin",
+      "strava_start_date": "2026-01-09T01:53:33Z",
+      "db_match": true
+    }
+  ]
+}
