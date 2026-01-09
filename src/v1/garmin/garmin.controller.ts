@@ -90,12 +90,29 @@ export class GarminController {
   public static async syncActivities(req: Request, res: Response): Promise<void> {
     try {
       const userId = req.dbUser!.id;
+      const { start_date, end_date } = req.query as { start_date?: string; end_date?: string };
+
       const account = await GarminData.getGarminAccountByUserId(userId);
       if (!account) {
         throw new ApiError(new Date().toISOString(), "Garmin account not connected", HttpStatusCode.NOT_FOUND);
       }
 
-      const result = await GarminService.syncActivities(userId, account);
+      // Parse date parameters if provided
+      const startDate = start_date ? new Date(start_date) : undefined;
+      const endDate = end_date ? new Date(end_date) : undefined;
+
+      // Validate dates if provided
+      if (startDate && isNaN(startDate.getTime())) {
+        throw new ApiError(new Date().toISOString(), "Invalid start_date format. Use ISO 8601 format.", HttpStatusCode.BAD_REQUEST);
+      }
+      if (endDate && isNaN(endDate.getTime())) {
+        throw new ApiError(new Date().toISOString(), "Invalid end_date format. Use ISO 8601 format.", HttpStatusCode.BAD_REQUEST);
+      }
+      if (startDate && endDate && startDate > endDate) {
+        throw new ApiError(new Date().toISOString(), "start_date must be before end_date", HttpStatusCode.BAD_REQUEST);
+      }
+
+      const result = await GarminService.syncActivities(userId, account, { startDate, endDate });
 
       res.status(HttpStatusCode.OK).json({
         success: true,

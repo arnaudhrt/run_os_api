@@ -1,4 +1,3 @@
-import { GarminConnect } from "garmin-connect";
 import { GarminData } from "./garmin.data";
 import { GarminAccountModel, GarminActivity } from "./garmin.model";
 import { ActivityData } from "@/v1/activities/activity.data";
@@ -7,6 +6,11 @@ import { convertGarminActivities } from "./garmin.utils";
 export interface SyncResult {
   fetched: number;
   saved: number;
+}
+
+export interface SyncOptions {
+  startDate?: Date;
+  endDate?: Date;
 }
 
 export interface ConnectResult {
@@ -47,15 +51,19 @@ export class GarminService {
   /**
    * Sync activities from Garmin for a user
    */
-  public static async syncActivities(userId: string, account: GarminAccountModel): Promise<SyncResult> {
+  public static async syncActivities(userId: string, account: GarminAccountModel, options: SyncOptions = {}): Promise<SyncResult> {
     // Create authenticated client
     const client = await GarminData.createClientFromAccount(account);
 
-    // Determine sync start date
-    const syncDate = account.last_sync_at ? new Date(account.last_sync_at) : undefined;
-
     // Fetch activities from Garmin
-    const garminActivities = await GarminData.fetchAllActivities(client, syncDate);
+    // If date range provided, use it; otherwise fall back to last_sync_at
+    let garminActivities: GarminActivity[];
+    if (options.startDate || options.endDate) {
+      garminActivities = await GarminData.fetchAllActivities(client, options.startDate, options.endDate);
+    } else {
+      const syncDate = account.last_sync_at ? new Date(account.last_sync_at) : undefined;
+      garminActivities = await GarminData.fetchAllActivities(client, syncDate);
+    }
 
     // Convert to our format
     const convertedActivities = convertGarminActivities(garminActivities, userId);
